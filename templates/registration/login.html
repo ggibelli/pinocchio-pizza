@@ -1,5 +1,9 @@
+<!-- templates/login.html -->
 {% extends '_base.html' %}
+{% load crispy_forms_tags %}
+
 {% block title %}Log-in{% endblock %}
+
 {% block content %}
   <h1>Log-in</h1>
   {% if form.errors %}
@@ -9,9 +13,9 @@
   {% endif %}
   <div class="login-form">
     <form method="post">
-      {{ form.as_p }}
+      {{ form|crispy }}
       {% csrf_token %}
-      <input type="submit" value="Log-in">
+      <input class="btn btn-success" type="submit" value="Log-in">
     </form>
     <p><a href="{% url 'password_reset' %}">Forgotten your password?</a></p>
   </div>
