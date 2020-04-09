@@ -9,7 +9,7 @@
   {% if form.errors %}
     <p>Your username and password didn't match. Please try again.</p>
   {% else %}
-    <p>Please, use the following form to log-in. If you don't have an account <a href="{% url 'register' %}">register here</a></p>  
+    <p>Please, use the following form to log-in. If you don't have an account <a href="{% url 'account_signup' %}">register here</a></p>  
   {% endif %}
   <div class="login-form">
     <form method="post">
@@ -17,6 +17,5 @@
       {% csrf_token %}
       <input class="btn btn-success" type="submit" value="Log-in">
     </form>
-    <p><a href="{% url 'password_reset' %}">Forgotten your password?</a></p>
   </div>
 {% endblock %}
