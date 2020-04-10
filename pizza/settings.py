@@ -163,3 +163,5 @@ ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
 
 DEFAULT_FROM_EMAIL = 'admin@pinocchiospizza.com'
+
+ACCOUNT_FORMS = {'signup': 'users.forms.CustomSignupForm'}
