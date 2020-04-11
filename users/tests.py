@@ -37,6 +37,8 @@ class SignupTests(TestCase):
 
     username = 'usertest'
     email = 'usertest@email.it'
+    first_name = 'gio'
+    last_name = 'gah'
 
     def setUp(self):
         url = reverse('account_signup')
@@ -49,8 +51,9 @@ class SignupTests(TestCase):
         self.assertNotContains(self.response, 'Pippopooppo')
 
     def test_signup_form(self): 
-        new_user = get_user_model().objects.create_user(self.username, self.email)
+        new_user = get_user_model().objects.create_user(username = self.username, email = self.email, first_name = self.first_name, last_name = self.last_name)
         self.assertEqual(get_user_model().objects.all().count(), 1)
         self.assertEqual(get_user_model().objects.all()[0].username, self.username)
         self.assertEqual(get_user_model().objects.all()[0].email, self.email)
-
+        self.assertEqual(get_user_model().objects.all()[0].first_name, self.first_name)
+        self.assertEqual(get_user_model().objects.all()[0].last_name, self.last_name)
