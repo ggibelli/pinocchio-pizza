@@ -1,5 +1,5 @@
 from django.test import TestCase
-from .models import Size, Pasta, PizzaChoice, Sub, Dinner, Topping, Salad, Order, SubChoice, DinnerChoice, Pizza
+from .models import Size, Pasta, PizzaChoice, Sub, Dinner, Topping, Salad, Order, SubChoice, DinnerChoice, Pizza, Customer
 from .prices import price_pizza, price_dinner, price_sub, price_order
 from django.contrib.auth import get_user_model
 
@@ -29,6 +29,7 @@ class DishesChoicesTest(TestCase):
             email = 'prova@prova.it',
             password = 'prova123'
         )
+        customer = Customer.objects.create(user = user)
         size = Size.objects.create(size='SM')
         pizza_choice = PizzaChoice.objects.create(
             name = 'aaa', 
@@ -71,7 +72,7 @@ class DishesChoicesTest(TestCase):
         pasta = Pasta.objects.create(name='Penne', final_price=10.00)
         salad = Salad.objects.create(name='Tuna', final_price=8.00)
         order = Order.objects.create(
-            customer_id = user,
+            customer_id = customer,
             final_price = 51.5
         )
         order.item_pizza.add(pizza)
@@ -127,12 +128,12 @@ class DishesChoicesTest(TestCase):
 
     def test_order_user(self):
         order = Order.objects.all()[0]
-        user = get_user_model().objects.all()[0]
-        self.assertEqual(order.customer_id, user)
+        customer = Customer.objects.all()[0]
+        self.assertEqual(order.customer_id, customer)
 
     def test_order_user_count(self):
-        user = get_user_model().objects.all()[0]
-        self.assertEqual(user.orders.count(), 1)
+        customer = Customer.objects.all()[0]
+        self.assertEqual(customer.orders.count(), 1)
 
 
 

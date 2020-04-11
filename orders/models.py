@@ -111,6 +111,12 @@ class Dinner(models.Model):
     def __str__(self):
         return f'{self.dinner_type} {self.size}'
 
+class Customer(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.user}'
+
 class Order(models.Model):
     item_pizza = models.ManyToManyField(Pizza, blank=True)
     item_subs = models.ManyToManyField(Sub, blank=True)
@@ -140,4 +146,7 @@ class Order(models.Model):
 
     def __str__(self):
         return f'{self.id} {self.customer_id} ({self.time_created})'
+
+
+
 
