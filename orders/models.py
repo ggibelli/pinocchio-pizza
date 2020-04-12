@@ -5,6 +5,7 @@ from django.core.signals import request_finished
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 
+user = get_user_model()
 
 class Size(models.Model):
     SMALL = 'SM'
@@ -115,22 +116,13 @@ class Dinner(models.Model):
     def __str__(self):
         return f'{self.dinner_type} {self.size}'
 
-user = get_user_model()
-
-class Customer(models.Model):
-    user = models.OneToOneField(user, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return f'{self.user}'
-
-
 class Order(models.Model):
     item_pizza = models.ManyToManyField(Pizza, blank=True)
     item_subs = models.ManyToManyField(Sub, blank=True)
     item_salad = models.ManyToManyField(Salad, blank=True)
     item_pasta = models.ManyToManyField(Pasta, blank=True)
     item_dinner = models.ManyToManyField(Dinner, blank=True)
-    customer_id = models.ForeignKey(Customer, null=True, on_delete=models.SET_NULL, related_name='orders')
+    customer_id = models.ForeignKey(user, null=True, on_delete=models.SET_NULL, related_name='orders')
     time_created = models.DateTimeField(auto_now_add=True)
     time_updated = models.DateField(auto_now=True)
     RECEIVED = 'RC'
@@ -153,6 +145,13 @@ class Order(models.Model):
 
     def __str__(self):
         return f'{self.id} {self.customer_id} ({self.time_created})'
+
+class Customer(models.Model):
+    user = models.OneToOneField(user, on_delete=models.CASCADE)
+    orders = models.ManyToManyField(Order, blank=True)
+
+    def __str__(self):
+        return f'{self.user}'
 
 
 
