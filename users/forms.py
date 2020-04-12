@@ -13,8 +13,6 @@ class CustomSignupForm(SignupForm):
         user.first_name = self.cleaned_data['first_name']
         user.last_name = self.cleaned_data['last_name']
         user.save()
-        customer = Customer.objects.create(user = user)
-        customer.save()
         return user
 
 

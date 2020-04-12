@@ -29,7 +29,7 @@ class DishesChoicesTest(TestCase):
             email = 'prova@prova.it',
             password = 'prova123'
         )
-        customer = Customer.objects.create(user = user)
+        customer = Customer.objects.get(user = user)
         size = Size.objects.create(size='SM')
         pizza_choice = PizzaChoice.objects.create(
             name = 'aaa', 

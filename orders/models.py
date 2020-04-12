@@ -1,5 +1,9 @@
 from django.db import models
 from django.conf import settings
+from django.contrib.auth import get_user_model
+from django.core.signals import request_finished
+from django.dispatch import receiver
+from django.db.models.signals import post_save
 
 
 class Size(models.Model):
@@ -111,11 +115,14 @@ class Dinner(models.Model):
     def __str__(self):
         return f'{self.dinner_type} {self.size}'
 
+user = get_user_model()
+
 class Customer(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.OneToOneField(user, on_delete=models.CASCADE)
 
     def __str__(self):
         return f'{self.user}'
+
 
 class Order(models.Model):
     item_pizza = models.ManyToManyField(Pizza, blank=True)
@@ -123,7 +130,7 @@ class Order(models.Model):
     item_salad = models.ManyToManyField(Salad, blank=True)
     item_pasta = models.ManyToManyField(Pasta, blank=True)
     item_dinner = models.ManyToManyField(Dinner, blank=True)
-    customer_id = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL, related_name='orders')
+    customer_id = models.ForeignKey(Customer, null=True, on_delete=models.SET_NULL, related_name='orders')
     time_created = models.DateTimeField(auto_now_add=True)
     time_updated = models.DateField(auto_now=True)
     RECEIVED = 'RC'
