@@ -1,157 +1,117 @@
-from django.db import models
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.signals import request_finished
-from django.dispatch import receiver
-from django.db.models.signals import post_save
+from django.core.validators import MinValueValidator
+from django.db import models
+from django.urls import reverse
+
+
 
 user = get_user_model()
 
-class Size(models.Model):
-    SMALL = 'SM'
-    LARGE = 'LG'
-    SIZE_CHOICE = [
-        (SMALL, 'Small'),
-        (LARGE, 'Large'),
+SM = 'Small'
+LG = 'Large'
+
+SIZE_CHOICE = [
+        (SM, 'Small'),
+        (LG, 'Large'),
     ]
-    size = models.CharField(
-        max_length=2,
-        choices=SIZE_CHOICE,
-        default=SMALL,
-    )
-    
+
+class Customer(models.Model):
+    user = models.OneToOneField(user, on_delete=models.CASCADE)
+
     def __str__(self):
-        return f'{self.size}'
-
-class PizzaChoice(models.Model):
+        return f'{self.user}'
+        
+class Category(models.Model):
     name = models.CharField(max_length=64)
-    price_regular = models.DecimalField(max_digits=6, decimal_places=2)
-    price_sicilian = models.DecimalField(max_digits=6, decimal_places=2)
-    price_large = models.DecimalField(max_digits=6, decimal_places=2)
-    price_sicilian_large = models.DecimalField(max_digits=6, decimal_places=2)
-
-    def is_valid_price(self):
-        return (self.price_sicilian_large > self.price_sicilian) and (self.price_large > self.price_regular) and self.price_regular > 0.0
 
     def __str__(self):
         return f'{self.name}'
 
-class SubChoice(models.Model):
+class MenuItem(models.Model):
     name = models.CharField(max_length=64)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
     price = models.DecimalField(max_digits=6, decimal_places=2)
-    price_large = models.DecimalField(max_digits=6, decimal_places=2)
-
-    def is_valid_price(self):
-        return (self.price_large > self.price) and (self.price > 0)
+    price_large = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
 
     def __str__(self):
         return f'{self.name}'
 
-class DinnerChoice(models.Model):
-    name = models.CharField(max_length=64)
-    price = models.DecimalField(max_digits=6, decimal_places=2)
-    price_large = models.DecimalField(max_digits=6, decimal_places=2)
-
     def is_valid_price(self):
-        return (self.price_large > self.price) and (self.price > 0)
-
-    def __str__(self):
-        return f'{self.name}'
-
-class Pizza(models.Model):
-    pizza_type = models.ForeignKey(PizzaChoice, on_delete=models.CASCADE)
-    is_sicilian = models.BooleanField(default=False)
-    size = models.ForeignKey(Size, on_delete=models.CASCADE)
-    final_price = models.DecimalField(max_digits=6, decimal_places=2, null=True) 
-
-    def is_valid_price(self):
-        return self.final_price > 0       
-
-    def __str__(self):
-        return f'{self.pizza_type} {self.is_sicilian} {self.size}'
-
-class Sub(models.Model):
-    sub_type = models.ForeignKey(SubChoice, on_delete=models.CASCADE)
-    size = models.ForeignKey(Size, on_delete=models.CASCADE)
-    final_price = models.DecimalField(max_digits=6, decimal_places=2, null=True)
-
-    def is_valid_price(self):
-        return self.final_price > 0 
-
-    def __str__(self):
-        return f'{self.sub_type} {self.size}'
+        if self.price_large:
+            return (self.price_large > self.price) and (self.price > 0)
+        else:
+            return (self.price > 0)
 
 class Topping(models.Model):
     name = models.CharField(max_length=64)
     is_topping_subs = models.BooleanField(default=False)
-    pizzas = models.ManyToManyField(Pizza, blank=True, related_name='toppings')
-    subs = models.ManyToManyField(Sub, blank=True, related_name='toppings')
-    price = models.DecimalField(max_digits=6, decimal_places=2, null=True)
-
-    def __str__(self):
-        return f'{self.name} {self.is_topping_subs}'
-
-class Pasta(models.Model):
-    name = models.CharField(max_length=64)
-    final_price = models.DecimalField(max_digits=6, decimal_places=2)
+    price = models.DecimalField(max_digits=6, decimal_places=2, default=0)
 
     def __str__(self):
         return f'{self.name}'
-
-class Salad(models.Model):
-    name = models.CharField(max_length=64)
-    final_price = models.DecimalField(max_digits=6, decimal_places=2)
-
-    def __str__(self):
-        return f'{self.name}'
-    
-class Dinner(models.Model):
-    dinner_type = models.ForeignKey(DinnerChoice, on_delete=models.CASCADE)
-    size = models.ForeignKey(Size, on_delete=models.CASCADE)
-    final_price = models.DecimalField(max_digits=6, decimal_places=2, null=True)
-
-    def is_valid_price(self):
-        return self.final_price > 0 
-
-    def __str__(self):
-        return f'{self.dinner_type} {self.size}'
 
 class Order(models.Model):
-    item_pizza = models.ManyToManyField(Pizza, blank=True)
-    item_subs = models.ManyToManyField(Sub, blank=True)
-    item_salad = models.ManyToManyField(Salad, blank=True)
-    item_pasta = models.ManyToManyField(Pasta, blank=True)
-    item_dinner = models.ManyToManyField(Dinner, blank=True)
-    customer_id = models.ForeignKey(user, null=True, on_delete=models.SET_NULL, related_name='orders')
+    customer = models.ForeignKey(user, on_delete=models.CASCADE, related_name='orders')
     time_created = models.DateTimeField(auto_now_add=True)
     time_updated = models.DateField(auto_now=True)
-    RECEIVED = 'RC'
+    CART = 'CT'
     PROCESSING = 'PR'
     DONE = 'DN'
     ORDER_STATES_CHOICES = [
-        (RECEIVED, 'received'),
+        (CART, 'cart'),
         (PROCESSING, 'processing'),
         (DONE, 'done'),
     ]
     order_state = models.CharField(
         max_length=2,
         choices=ORDER_STATES_CHOICES,
-        default=RECEIVED,
+        default=CART,
     )
     final_price = models.DecimalField(max_digits=6, decimal_places=2, null=True)
 
+    def get_absolute_url(self):
+        return reverse('order_detail', kwargs={'pk': self.pk})
+
+    def get_price(self):
+        price = 0
+        for item in self.items.all():
+            price += item.get_price()
+        return price
+        
     def is_valid_price(self):
         return self.final_price > 0 
 
     def __str__(self):
         return f'{self.id} {self.customer_id} ({self.time_created})'
 
-class Customer(models.Model):
-    user = models.OneToOneField(user, on_delete=models.CASCADE)
-    orders = models.ManyToManyField(Order, blank=True)
+class MenuInstance(models.Model):
+    customer = models.ForeignKey(user, on_delete=models.CASCADE)
+    kind = models.ForeignKey(MenuItem, on_delete=models.CASCADE)
+    toppings = models.ManyToManyField(Topping, blank=True)
+    n_items = models.PositiveIntegerField(validators=[MinValueValidator(1)], default=1)
+    size = models.CharField(
+        max_length=10,
+        choices=SIZE_CHOICE,
+        default=SM,
+    )
+    order = models.ForeignKey(Order, null=True, on_delete=models.CASCADE, related_name='items')
+    final_price = models.DecimalField(max_digits=6, decimal_places=2)  
+
+    def get_price(self):
+        if self.size == 'SM':
+            return self.kind.price * self.n_items
+        elif self.size == 'LG':
+            return self.kind.price_large * self.n_items 
+
+    def is_valid_price(self):
+        return self.final_price > 0   
 
     def __str__(self):
-        return f'{self.user}'
+        return f'{self.kind}'
+
+
 
 
 

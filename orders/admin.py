@@ -1,13 +1,17 @@
 from django.contrib import admin
-from .models import Size, Pasta, PizzaChoice, Sub, Dinner, Topping, Salad, Order, SubChoice, DinnerChoice, Pizza, Customer
+from .models import Category, Customer, MenuItem ,MenuInstance, Order, Topping
 
+class OrderInline(admin.TabularInline):
+    model = MenuInstance
 
-admin.site.register(Size)
-admin.site.register(Pasta)
-admin.site.register(Salad)
-admin.site.register(DinnerChoice)
-admin.site.register(SubChoice)
-admin.site.register(PizzaChoice)
+class OrderAdmin(admin.ModelAdmin):
+    inlines = [
+        OrderInline,
+    ]
+
+admin.site.register(Category)
+admin.site.register(MenuItem)
 admin.site.register(Topping)
-admin.site.register(Order)
+admin.site.register(Order, OrderAdmin)
 admin.site.register(Customer)
+

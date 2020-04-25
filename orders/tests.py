@@ -1,24 +1,8 @@
-from django.test import TestCase
-from .models import Size, Pasta, PizzaChoice, Sub, Dinner, Topping, Salad, Order, SubChoice, DinnerChoice, Pizza, Customer
-from .prices import price_pizza, price_dinner, price_sub, price_order
 from django.contrib.auth import get_user_model
+from django.test import TestCase
 
+from .models import Category, Customer , MenuInstance, Order, MenuItem, Topping
 
-class SizeTest(TestCase):
-
-    def test_create_size(self):
-        size = Size.objects.create(size='SM')
-        self.assertEqual(size.size, 'SM')
-
-class SimpleDishesTest(TestCase):
-
-    def test_pasta_salad(self):
-        pasta = Pasta.objects.create(name='Penne', final_price=10.00)
-        salad = Salad.objects.create(name='Tuna', final_price=8.00)
-        self.assertEqual(pasta.final_price, 10.00)
-        self.assertEqual(pasta.name, 'Penne')
-        self.assertEqual(salad.name, 'Tuna')
-        self.assertEqual(salad.final_price, 8.00)
 
 class DishesChoicesTest(TestCase):
 
@@ -30,110 +14,81 @@ class DishesChoicesTest(TestCase):
             password = 'prova123'
         )
         customer = Customer.objects.get(user = user)
-        size = Size.objects.create(size='SM')
-        pizza_choice = PizzaChoice.objects.create(
-            name = 'aaa', 
-            price_regular = 2.5, 
-            price_sicilian = 8.5,
-            price_large = 5.0,
-            price_sicilian_large = 10.5
-        )
-        sub_choice = SubChoice.objects.create(
+        category = Category.objects.create(name='buono')
+        category2 = Category.objects.create(name='cattivo')
+
+        pizza = MenuItem.objects.create(
             name = 'bbb',
+            category=category,
             price = 5.0,
             price_large = 10.0
         )
-        dinner_choice = DinnerChoice.objects.create(
+        sub = MenuItem.objects.create(
             name = 'ccc',
+            category=category2,
             price = 20.0,
             price_large = 25.0
         )
+
         tops1 = Topping.objects.create(name='abc')
         tops2 = Topping.objects.create(name='bac')
         tops3 = Topping.objects.create(name='cab')
-        pizza = Pizza.objects.create(
-            pizza_type = pizza_choice,
-            is_sicilian = True,
-            size = size,
-            final_price = 8.5
-        )
-        pizza.toppings.add(tops1, tops2)
-        sub = Sub.objects.create(
-            sub_type = sub_choice,
-            size = size,
+        pizza = MenuInstance.objects.create(
+            customer = user,
+            kind = pizza,
+            size = 'SM',
+            n_items = 1,
             final_price = 5
         )
+        pizza.toppings.add(tops1, tops2)
+        sub = MenuInstance.objects.create(
+            customer = user,
+            kind = sub,
+            size = 'LG',
+            n_items = 2,
+            final_price = 50
+        )
         sub.toppings.add(tops3)
-        dinner = Dinner.objects.create(
-            dinner_type = dinner_choice,
-            size = size,
-            final_price = 20
-        )
-        pasta = Pasta.objects.create(name='Penne', final_price=10.00)
-        salad = Salad.objects.create(name='Tuna', final_price=8.00)
-        order = Order.objects.create(
-            customer_id = customer,
-            final_price = 51.5
-        )
-        order.item_pizza.add(pizza)
-        order.item_subs.add(sub)
-        order.item_dinner.add(dinner)
-        order.item_salad.add(salad)
-        order.item_pasta.add(pasta)
+        
 
     def test_dishes_count(self):
-        self.assertEqual(PizzaChoice.objects.count(), 1)
-        self.assertEqual(SubChoice.objects.count(), 1)
-        self.assertEqual(DinnerChoice.objects.count(), 1)
+        self.assertEqual(MenuItem.objects.count(), 2)
 
-    def test_is_valid_pizza(self):
-        pizza = PizzaChoice.objects.get(name='aaa')
-        self.assertTrue(pizza.is_valid_price())
-
-    def test_is_valid_sub(self):
-        sub = SubChoice.objects.get(name='bbb')
+    def test_is_valid_menu(self):
+        sub = MenuItem.objects.get(name='bbb')
         self.assertTrue(sub.is_valid_price())
 
-    def test_is_valid_dinner(self):
-        dinner = DinnerChoice.objects.get(name='ccc')
-        self.assertTrue(dinner.is_valid_price())
-
-    def test_is_pizza_right_price(self):
-        pizza = Pizza.objects.all()[0]
-        self.assertEqual(pizza.final_price, price_pizza(pizza))
+    def test_is_valid_instance(self):
+        pizza = MenuInstance.objects.all()[0]
         self.assertTrue(pizza.is_valid_price())
+        self.assertEqual(pizza.final_price, pizza.get_price())
 
     def test_pizza_ntoppings(self):
-        pizza = Pizza.objects.all()[0]
+        kind = MenuItem.objects.get(name='bbb')
+        pizza = MenuInstance.objects.get(kind=kind)
         self.assertEqual(pizza.toppings.count(), 2)
 
-    def test_is_sub_right_price(self):
-        sub = Sub.objects.all()[0]
-        self.assertEqual(sub.final_price, price_sub(sub))
-        self.assertTrue(sub.is_valid_price())
-
-    def test_pizza_ntoppings(self):
-        sub = Sub.objects.all()[0]
-        self.assertEqual(sub.toppings.count(), 1)
-
-    def test_is_dinner_right_price(self):
-        dinner = Dinner.objects.all()[0]
-        self.assertEqual(dinner.final_price, price_dinner(dinner))
-        self.assertTrue(dinner.is_valid_price())
+    def test_order_right_state(self):
+        order = Order.objects.all()[0]
+        self.assertEqual(order.order_state, 'CT')
 
     def test_order_right_price(self):
         order = Order.objects.all()[0]
-        self.assertEqual(order.final_price, price_order(order))
+        self.assertEqual(order.final_price, order.get_price())
         self.assertTrue(order.is_valid_price())
 
     def test_order_user(self):
         order = Order.objects.all()[0]
-        customer = Customer.objects.all()[0]
-        self.assertEqual(order.customer_id, customer)
+        user = Customer.objects.all()[0]
+        self.assertEqual(order.customer_id, user.id)
 
     def test_order_user_count(self):
-        customer = Customer.objects.all()[0]
-        self.assertEqual(customer.orders.count(), 1)
+        user = get_user_model().objects.all()[0]
+        self.assertEqual(user.orders.count(), 1)
+
+    def test_items_count(self):
+        order = Order.objects.all()[0]
+        self.assertEqual(order.items.count(), 2)
 
 
 
