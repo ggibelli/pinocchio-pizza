@@ -1,16 +1,46 @@
 {% extends '_base.html' %}
+
 {% block title %}Menu{% endblock title %}
 {% block content %}
-<h1>Menu</h1>
-<ul>
-  <li>Pizzas:
-    <ul>
-    {% for item in items %}
-      <li>{{item}}</li>
-      {% empty %}
-      <li>No items</li>
-      {% endfor %}
-    </ul>
-  
-</ul>
+<div class="container">
+  <div class="row">
+    <div class="col">
+      <h1>Menu</h1>
+      <ul>
+        {% for category in categories %}
+        <li><a href="{% url 'additem' category%}">{{category}}:</a>
+          <ul>
+          {% for item in items %}
+            {% if item.category == category %}
+            <li>{{item}}</li>
+            
+            {% endif %}
+            
+            {% empty %}
+            <li>No items</li>
+            {% endfor %}
+          </ul>
+        </li>
+        {% if category|stringformat:"s" == 'Pizza' %}
+            <label for="toppings">Toppings:</label>
+            <select id="toppings">
+              {% for topping in toppings %}
+              <option value="{{topping}}">{{topping}}</option>
+              {% empty %}
+              <option value="none">No toppings</option>
+              {% endfor %}
+
+            </select>
+            {% endif %}
+        {% endfor %}
+      </ul>
+    </div>
+
+  </div>
+</div>
+
+
+
+
 {% endblock content %}
+

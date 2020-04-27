@@ -5,7 +5,7 @@ from django.core.validators import MinValueValidator
 from django.db import models
 from django.urls import reverse
 
-
+from autoslug import AutoSlugField
 
 user = get_user_model()
 
@@ -25,6 +25,7 @@ class Customer(models.Model):
         
 class Category(models.Model):
     name = models.CharField(max_length=64)
+    slug = AutoSlugField(populate_from='name', default=0)
 
     def __str__(self):
         return f'{self.name}'
@@ -69,16 +70,20 @@ class Order(models.Model):
         choices=ORDER_STATES_CHOICES,
         default=CART,
     )
-    final_price = models.DecimalField(max_digits=6, decimal_places=2, null=True)
+    final_price = models.DecimalField(max_digits=6, decimal_places=2)
 
     def get_absolute_url(self):
-        return reverse('order_detail', kwargs={'pk': self.pk})
+        return reverse('order-detail', kwargs={'pk': self.pk})
 
     def get_price(self):
         price = 0
         for item in self.items.all():
-            price += item.get_price()
+            price += float(item.get_price)
         return price
+
+    def save(self, *args, **kwargs):
+        self.final_price = self.get_price()
+        super(Order, self).save(*args, **kwargs)
         
     def is_valid_price(self):
         return self.final_price > 0 
@@ -97,16 +102,25 @@ class MenuInstance(models.Model):
         default=SM,
     )
     order = models.ForeignKey(Order, null=True, on_delete=models.CASCADE, related_name='items')
-    final_price = models.DecimalField(max_digits=6, decimal_places=2)  
 
+    # Calling this get price to update the order price, when subs I need to count the toppings, 
+    # so I skip the counting when instance created and calculate on M2M changed in signal
+    @property
     def get_price(self):
-        if self.size == 'SM':
-            return self.kind.price * self.n_items
-        elif self.size == 'LG':
-            return self.kind.price_large * self.n_items 
+        price = 0
+        if self.size == SM:
+            price = self.kind.price * self.n_items
+        elif self.size == LG:
+            price = self.kind.price_large * self.n_items
+        if self.kind.category.name == 'Subs':
+            if not self.pk: 
+                pass
+            else:
+                price = float(price) + self.toppings.all().count() * 0.50
+        return price
 
     def is_valid_price(self):
-        return self.final_price > 0   
+        return self.get_price > 0   
 
     def __str__(self):
         return f'{self.kind}'

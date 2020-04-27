@@ -36,17 +36,17 @@ class DishesChoicesTest(TestCase):
         pizza = MenuInstance.objects.create(
             customer = user,
             kind = pizza,
-            size = 'SM',
+            size = 'Small',
             n_items = 1,
-            final_price = 5
+            #final_price = 5
         )
         pizza.toppings.add(tops1, tops2)
         sub = MenuInstance.objects.create(
             customer = user,
             kind = sub,
-            size = 'LG',
+            size = 'Large',
             n_items = 2,
-            final_price = 50
+            #final_price = 50
         )
         sub.toppings.add(tops3)
         
@@ -61,7 +61,6 @@ class DishesChoicesTest(TestCase):
     def test_is_valid_instance(self):
         pizza = MenuInstance.objects.all()[0]
         self.assertTrue(pizza.is_valid_price())
-        self.assertEqual(pizza.final_price, pizza.get_price())
 
     def test_pizza_ntoppings(self):
         kind = MenuItem.objects.get(name='bbb')

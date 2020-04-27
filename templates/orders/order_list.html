@@ -4,7 +4,7 @@
 <h1>Orders</h1>
 <ul>
     {% for order in orders %}
-    <li>{{order}}</li>
+    <li>{{order}}<a href="{{ order.get_absolute_url }}">{{ order.id }}</a></li>
     {% empty %}
     <li>No orders yet.</li>
     {% endfor %}

@@ -1,0 +1,12 @@
+{% extends '_base.html' %}
+
+{% block title %}Error{% endblock title %}
+{% block content %}
+<h1>Error</h1>
+
+    {{ message }}
+
+    <hr>
+
+    <a href="{% url 'menu' %}">Return to menu.</a>
+{% endblock content %}

@@ -1,0 +1,13 @@
+{% extends '_base.html' %}
+{% block title %}Shopping Cart{% endblock title %}
+{% block content %}
+{% load crispy_forms_tags %}
+<h1>Parents</h1>
+<form method="post">{% csrf_token %}
+    {{ form.as_p }}
+    <h2>children</h2>
+    {{ item.as_p }}
+    <input type="submit" value="Save">
+</form>
+
+{% endblock content %}

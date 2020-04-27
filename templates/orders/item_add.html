@@ -1,13 +1,114 @@
-{% extends '_base.html' %}
+{% extends '_base_orders.html' %}
 {% load crispy_forms_tags %}
 
-{% block title %}Pizza{% endblock title %}
-
 {% block content %}
-<h1>Pizza</h1>
+
+<h1>{{category.name}}</h1>
 <form method="post">
-    {% csrf_token %}
-    {{ form|crispy }}
-    <button class="btn btn-success" type="submit">Add</button>
-  </form>
+  {% csrf_token %}
+  {{ form|crispy }}
+  <button class="btn btn-success" type="submit">Add</button>
+</form>
+<hr>
+
+<span>Final price:<p id="final_price"></p></span>
+
+<script type="text/javascript"> 
+  const category = '{{category.name}}'
+  console.log(category)
+  const items = [];
+  {% for item in items %}
+  items.push({name:'{{item.name}}', price:'{{item.price}}', price_large:'{{item.price_large}}'});
+  {% endfor %}
+  document.addEventListener('DOMContentLoaded', () => { 
+    const itemKind = document.getElementById('id_kind');
+    const itemSize = document.getElementById('id_size');
+    let itemPrice;
+    let isSub = false;
+    const form = document.querySelector('form');
+    let checks;
+    if (category !== 'Subs') {
+      checks = document.querySelectorAll(".form-check-input");
+    }
+    else {
+      isSub = true;
+      checks = document.querySelectorAll(".form-check-label");
+    }
+    if (document.getElementById('div_id_toppings')) {
+        document.getElementById('div_id_toppings').readOnly = true;
+    }
+    let max = 0;
+    let currentItem
+    form.addEventListener('change', function() {
+      let n_items = document.getElementById('id_n_items').value
+      currentItem = itemKind.options[itemKind.selectedIndex].text;
+      let currentSize = itemSize.options[itemSize.selectedIndex].text;
+      for (let item of items){
+        if (currentItem == item.name && currentSize == 'Small') {
+          itemPrice = parseFloat(item.price) * n_items;
+        }
+        else if (currentItem == item.name && currentSize == 'Large'){
+          itemPrice = parseFloat(item.price_large) * n_items;
+        }
+      }
+      document.getElementById('final_price').innerHTML = itemPrice;
+      if (!isSub){
+        if (currentItem == 'One topping'){
+          max = 1;
+          cleanChecks();
+        }
+        else if (currentItem == 'Two toppings') {
+          max = 2;
+          cleanChecks();
+        }
+        else if (currentItem == 'Three toppings') {
+          max = 3;
+          cleanChecks();
+        }
+        else if (currentItem == 'Special') {
+          max = 5;
+          cleanChecks();
+        }
+        else {
+          max = 0;
+          cleanChecks();
+        }
+      }
+      else {
+        let checkInputs = document.getElementsByClassName('form-check-input');
+        for (let check of checkInputs) {
+          if (!currentItem.includes('Steak')){
+            let checktext = document.querySelector('label[for='+check.id+']').textContent.trim();
+            if (checktext != 'Cheese') {
+              check.disabled = true;
+              check.checked = false;
+            }
+          } 
+          else{
+            check.disabled = false;
+          }        
+        }
+        let checkedChecks = document.querySelectorAll(".form-check-input:checked");
+        document.getElementById('final_price').innerHTML = itemPrice + (checkedChecks.length * 0.5);
+      }
+    });
+    let checkedChecks = document.querySelectorAll(".form-check-input:checked");
+    function cleanChecks(){
+      if (checkedChecks.length > max) {
+        for (let i = 0; i < checkedChecks.length; i++){
+        checkedChecks[i].checked = false;
+        }
+      }
+    }
+    for (let i = 0; i < checks.length; i++){
+      checks[i].onclick = selectiveCheck;
+    }
+    function selectiveCheck (event) {
+      checkedChecks = document.querySelectorAll(".form-check-input:checked");
+      if (checkedChecks.length >= max + 1)
+        return false;
+    }
+  })
+</script>
+
 {% endblock content %}

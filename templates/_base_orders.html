@@ -4,7 +4,7 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>{% block title %}Bookstore{% endblock title %}</title>
+  <title>{% block title %}{{category.name}}{% endblock title %}</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
   <!-- CSS -->
@@ -30,8 +30,23 @@
     </div>
   </header>
   <div class="container">
-    {% block content %}
-    {% endblock content %}
+    <div class="row">
+      <div class="col-4">
+        <div class="list-group">
+          {% for category in categories %}
+          <a href="{% url 'additem' category %}" class="list-group-item list-group-item-action">{{category}}</a>
+          {% empty %}
+          <a href="#" class="list-group-item list-group-item-action">No items</a>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="col">
+        {% block content %}
+        {% endblock content %}
+      </div>
+    </div>
+    
+    
   </div>
   <!-- Optional JavaScript -->
   <!-- jQuery first, then Popper.js, then Bootstrap JS -->
@@ -40,7 +55,7 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
 
   {% block javascript %}
-  <script src="{% static 'js/base.js' %}"></script>
+  <!--<script src="{% static 'js/base.js' %}"></script>-->
   {% endblock javascript %}
 </body>
 </html>
