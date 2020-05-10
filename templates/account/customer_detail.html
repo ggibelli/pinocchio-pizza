@@ -1,11 +1,37 @@
 {% extends '_base.html' %}
 {% block title %}{{user.get_full_name}}{% endblock title %}
 {% block content %}
-<h1>Homepage</h1>
+<h1>Your homepage</h1>
 {% if user.is_authenticated %}
-  Hi {{ user.get_full_name }}!
-{% else %}
-  <p>...</p>
+  Hi {{ user.get_full_name }}! You've been eating {{orders.count}} times here already!
 
 {% endif %}
+<hr>
+<h4>Your previous orders</h4>
+
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th scope="col">ID order</th>
+      <th scope="col">Date</th>
+      <th scope="col">Order state</th>
+      <th scope="col">Final price</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for order in orders %}
+
+    <tr>
+
+      <th scope="row">{{order.pk}}</th>
+      <td>{{order.time_created}}</td>
+      <td>{{order.order_state}}</td>
+      <td>{{order.final_price}}</td>
+      
+
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
 {% endblock content %}

@@ -3,6 +3,14 @@ from django.forms import ModelForm
 from django.forms.models import inlineformset_factory
 from django.forms.widgets import CheckboxSelectMultiple
 
+from crispy_forms.helper import FormHelper, Layout
+from crispy_forms.layout import Submit, Layout, Field, Fieldset
+from crispy_forms.bootstrap import *
+
+
+
+
+
 from .models import Category, MenuItem, MenuInstance, Order, Topping
 
 class MenuForm(forms.ModelForm):
@@ -13,16 +21,46 @@ class MenuForm(forms.ModelForm):
     # get the category from the url and query only the item in that category (kwargs.pop)    
     def __init__(self, *args, **kwargs):
         category = kwargs.pop('category')
-        category_id = Category.objects.get(name=category)
+        category_id = Category.objects.get(slug=category)
         super(MenuForm, self).__init__(*args, **kwargs)
         self.fields['kind'].queryset = MenuItem.objects.filter(category=category_id)
         self.fields['toppings'].widget = CheckboxSelectMultiple()
-        if category == 'Pasta' or category == 'Salad' or category == 'Dinner':
+        if category == 'pasta' or category == 'salad' or category == 'dinner-platters':
             self.fields['toppings'].widget = forms.HiddenInput()
-        elif category == 'Subs':
+            if category == 'salad':
+                self.fields['size'].widget = forms.HiddenInput()
+        elif category == 'subs':
             self.fields["toppings"].queryset = Topping.objects.filter(is_topping_subs=True)
         else:
             self.fields["toppings"].queryset = Topping.objects.all()
+
+class OrderForm(forms.ModelForm):
+    class Meta:
+        model = Order
+        fields = ['order_state', 'final_price']
+
+class CartForm(forms.ModelForm):
+    class Meta:
+        model = Order
+        fields = ['is_confirmed']
+        widgets = {'is_confirmed': forms.HiddenInput()}
                
 OrderFormset = inlineformset_factory(
-    Order, MenuInstance, fields=('kind', 'n_items', 'size'), extra=0)
+    Order, MenuInstance, fields=('kind', 'size', 'n_items'), extra=0)
+
+#OrderFormset = inlineformset_factory(
+#    Order, MenuInstance, fields=('n_items', 'size'), extra=0
+#)
+
+class MyFormSetHelper(FormHelper):
+    def __init__(self, *args, **kwargs):
+        super(MyFormSetHelper, self).__init__(*args, **kwargs)
+        self.layout = Layout(
+            Fieldset(
+                'kind',
+                'size',
+                'n_items',
+            )
+        )
+        self.form_tag = False
+        self.template = 'orders/table_inline_formset.html'

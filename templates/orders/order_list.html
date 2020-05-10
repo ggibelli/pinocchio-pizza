@@ -2,11 +2,32 @@
 {% block title %}Orders{% endblock title %}
 {% block content %}
 <h1>Orders</h1>
-<ul>
-    {% for order in orders %}
-    <li>{{order}}<a href="{{ order.get_absolute_url }}">{{ order.id }}</a></li>
-    {% empty %}
-    <li>No orders yet.</li>
-    {% endfor %}
-</ul>
+<table class="table table-hover">
+    <thead>
+      <tr>
+        <th scope="col">ID Order</th>
+        <th scope="col">Time created</th>
+        <th scope="col">Time updated</th>
+        <th scope="col">Full name</th>
+        <th scope="col">Order state</th>
+        <th scope="col">Final price</th>
+
+      </tr>
+    </thead>
+    <tbody>
+        {% for order in orders %}
+      <tr style="transform: rotate(0);">
+        <th scope="row"><a href="{{ order.get_absolute_url }}" class="stretched-link">{{order.id}}</a></th>
+        <td>{{order.time_created}}</td>
+        <td>{{order.time_updated}}</td>
+        <td>{{order.customer.first_name }} {{order.customer.last_name}}</td>
+        <td>{{order.order_state}}</td>
+        <td>{{order.final_price}}</td>
+      </tr>
+      {% endfor %}
+
+      
+    </tbody>
+  </table>
+
 {% endblock content %}

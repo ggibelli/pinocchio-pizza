@@ -4,11 +4,12 @@
 {% load crispy_forms_tags %}
 <h1>Shopping cart</h1>
 <div class="row no-gutters align-items-bottom">
-    <div class="col-3 my-top" style="margin-top: 16px;">
+    <div class="col-5 my-top" style="margin-top: 16px;">
         <table class="table table-sm">
             <thead>
                 <tr>
                     <th>Category</th>
+                    <th>Dish</th>
                 </tr>
 
             </thead>
@@ -16,15 +17,17 @@
                 {% for item in order.items.all %}
                 <tr>
                     <td class="align-middle {{item.category}}">{{item.category}}</td>
+                    <td class="align-middle">{{item.kind}}</td>
                 </tr>
                 {% endfor %}
                 <tr>
                     <td class="align-middle">Final price</td>
+                    <td>&nbsp;</td>
                 </tr>
             </tbody>
         </table>
     </div>
-    <div class="col-7 order-1 my-top">
+    <div class="col-5 order-1 my-top">
         <form method="post">
             {% csrf_token %}
             
@@ -48,11 +51,11 @@
             <tbody>
                 {% for item in order.items.all %}
                 <tr>
-                    <td class="align-middle price" id="{{item.pk}}">{{item.price}}$</td>
+                    <td class="align-middle" id="{{item.pk}}">{{item.price}}</td>
                 </tr>
                 {% endfor %}
                 <tr>
-                    <td id="total-price">{{order.final_price}}$</td>
+                    <td id="total-price">{{order.final_price}}</td>
                 </tr>
             </tbody>
         </table>
@@ -61,7 +64,6 @@
         
        
 </div>
-
 <script>
   const items = [];
   {% for item in order.items.all %}
@@ -81,44 +83,46 @@
     item.idCSS = 'id_items-' + count;
     count++;
   }
+  console.log(items)
   document.addEventListener('DOMContentLoaded', () => { 
+    const re = /id.+\d+/;
+    const form = document.querySelector('form');
     const selectors = document.querySelectorAll('select');
     const inputs = document.querySelectorAll('input[type="number"')
-    updateItem(inputs);
-    updateItem(selectors);
-    items.filter(item => {
-        if (item.itemCategory == 'Salad' || item.itemCategory == 'Pasta'){
-            document.getElementById(item.idCSS + '-size').style.visibility = 'hidden'
-        }
-    })
-})
-    
-function updateItem(arrayDOM){
-    for (let itemDOM of arrayDOM) {
-        itemDOM.addEventListener('change', () => {
-            let itemIDregex = itemDOM.id.match(/id.+\d+/)[0]
+    for (let input of inputs){
+        input.addEventListener('change', () => {
+            let itemIDregex = input.id.match(re)[0]
             items.filter(item => {
-                if(item.idCSS == itemIDregex){
-                    if (isNaN(itemDOM.value)){
-                        item.itemSize = itemDOM.value;
-                    }
-                    else {
-                        item.nItems = itemDOM.value
-                    }
-                    document.getElementById(item.itemID).innerHTML = item.price.toFixed(2) + '$';
-                    let prices = [];
-                    document.querySelectorAll('.price').forEach(element => {
-                        prices.push(parseFloat(element.innerHTML))
-                    });
-                    let final_price = prices.reduce((a, b) => a + b)
-                    document.getElementById('total-price').innerHTML = final_price.toFixed(2) + '$';
+                console.log(itemIDregex, item.idCSS)
+                if (itemIDregex == item.idCSS){
+                    item.nItems = input.value
                 }
             })
-            
+            console.log(items)
         })
     }
     
-}
+    for (let selector of selectors){
+        selector.addEventListener('change', () => {
+            for (let option of Array.from(selector.options)) {
+                if (option.selected) {
+                    
+                    items.filter(item => {
+                        let itemIDregex = option.parentElement.id.match(re)[0]
+                        console.log(itemIDregex)
+                        if (item.idCSS == itemIDregex){
+                            item.itemSize = option.value
+                        console.log(items)
+                    }
+                    })
+                }
+            }
+        })
+    }
+    })
+    
+
+        
 
 
 </script>

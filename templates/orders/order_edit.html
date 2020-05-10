@@ -1,0 +1,40 @@
+{% extends '_base.html' %}
+{% block title %}Order{% endblock title %}
+{% block content %}
+{% load crispy_forms_tags %}
+<h3>Order n. {{order.pk}}</h3>
+<h5>{{order.customer.first_name}} {{order.customer.last_name}}</h5>
+
+<table class="table table-sm">
+    <thead>
+      <tr>
+        <th scope="col">Dish</th>
+        <th scope="col">Category</th>
+        <th scope="col">Size</th>
+        <th scope="col">N. items</th>
+        <th scope="col">Price</th>
+      </tr>
+    </thead>
+    <tbody>
+        {% for item in order.items.all %}
+      <tr>
+        <th scope="row">{{item.kind}}</th>
+        <td>{{item.kind.category}}</td>
+        <td>{{item.size}}</td>
+        <td>{{item.n_items}}</td>
+        <td>{{item.price}}$</td>
+      </tr>
+      {% endfor %}
+
+    </tbody>
+  </table>
+<form method="post">
+    {% csrf_token %}
+    
+
+    {{ form|crispy }}
+    <button class="btn btn-success" type="submit">Save</button>
+    <a class='btn btn-danger'href="{% url 'order-delete' order.pk%}" >delete</a>
+
+</form>
+{% endblock content %}

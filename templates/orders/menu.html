@@ -4,35 +4,30 @@
 {% block content %}
 <div class="container">
   <div class="row">
-    <div class="col">
-      <h1>Menu</h1>
-      <ul>
-        {% for category in categories %}
-        <li><a href="{% url 'additem' category%}">{{category}}:</a>
-          <ul>
-          {% for item in items %}
-            {% if item.category == category %}
-            <li>{{item}}</li>
-            
-            {% endif %}
-            
-            {% empty %}
-            <li>No items</li>
-            {% endfor %}
-          </ul>
-        </li>
-        {% if category|stringformat:"s" == 'Pizza' %}
-            <label for="toppings">Toppings:</label>
-            <select id="toppings">
-              {% for topping in toppings %}
-              <option value="{{topping}}">{{topping}}</option>
-              {% empty %}
-              <option value="none">No toppings</option>
-              {% endfor %}
 
-            </select>
+    <div class="col-sm8 offset-sm-3">
+      <ul class="list-group">
+        {% for category in categories %}
+        {% load static %}
+        <a href="{% url 'additem' category.slug%}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+          <div class="flex-column">
+            {{category}}
+            {% for item in items %}
+            {% if item.category == category %}
+            <ul class="list-unstyled">
+              <li><small>{{item}}</small></li>
+            </ul>
             {% endif %}
+            {% endfor %}
+            <span class="badge badge-info badge-pill"> {{category.dishes.count}} Dishes in menu</span>
+            
+          </div>
+          <div class="image-parent">
+              <img src="{% static 'images/'|add:category.slug|add:'.jpg' %}" class="img-thumbnail" alt="{{category}}">
+          </div>
+        </a>
         {% endfor %}
+        
       </ul>
     </div>
 

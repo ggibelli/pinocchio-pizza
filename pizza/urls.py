@@ -24,4 +24,5 @@ urlpatterns = [
     # Local apps
     path('', include('pages.urls')),
     path('', include('orders.urls')),
+    path('', include('users.urls')),
 ]

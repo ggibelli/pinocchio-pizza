@@ -1,21 +1,35 @@
-{% extends '_base_orders.html' %}
+{% extends '_base.html' %}
 {% load crispy_forms_tags %}
 
 {% block content %}
 
-<h1>{{category.name}}</h1>
-<form method="post">
-  {% csrf_token %}
-  {{ form|crispy }}
-  <button class="btn btn-success" type="submit">Add</button>
-</form>
-<hr>
 
-<span>Final price:<p id="final_price"></p></span>
-
+<div class="row">
+  <div class="col-4">
+    <div class="list-group">
+      {% for category in categories %}
+      <a href="{% url 'additem' category.slug %}" class="list-group-item list-group-item-action">{{category}}</a>
+      {% empty %}
+      <a href="#" class="list-group-item list-group-item-action">No items</a>
+      {% endfor %}
+    </div>
+  </div>
+  <div class="col">
+    <h1>{{category.name}}</h1>
+    <form method="post">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <button class="btn btn-success" type="submit">Add</button>
+    </form>
+    <hr>
+    <p>
+      <label for="output">Price: </label>
+      <output name="result" id="final_price">Select your dish!</output>
+    </p>
+  </div>
+</div>
 <script type="text/javascript"> 
   const category = '{{category.name}}'
-  console.log(category)
   const items = [];
   {% for item in items %}
   items.push({name:'{{item.name}}', price:'{{item.price}}', price_large:'{{item.price_large}}'});
@@ -42,7 +56,13 @@
     form.addEventListener('change', function() {
       let n_items = document.getElementById('id_n_items').value
       currentItem = itemKind.options[itemKind.selectedIndex].text;
-      let currentSize = itemSize.options[itemSize.selectedIndex].text;
+      let currentSize;
+      if (itemSize.value == 'Small'){
+        currentSize = 'Small';
+      }
+      else{
+        currentSize = itemSize.options[itemSize.selectedIndex].text;
+      }
       for (let item of items){
         if (currentItem == item.name && currentSize == 'Small') {
           itemPrice = parseFloat(item.price) * n_items;
@@ -50,8 +70,9 @@
         else if (currentItem == item.name && currentSize == 'Large'){
           itemPrice = parseFloat(item.price_large) * n_items;
         }
+        
       }
-      document.getElementById('final_price').innerHTML = itemPrice;
+      showPriceDOM();
       if (!isSub){
         if (currentItem == 'One topping'){
           max = 1;
@@ -89,10 +110,14 @@
           }        
         }
         let checkedChecks = document.querySelectorAll(".form-check-input:checked");
-        document.getElementById('final_price').innerHTML = itemPrice + (checkedChecks.length * 0.5);
+        itemPrice = itemPrice + (checkedChecks.length * 0.5);
+        showPriceDOM();
       }
     });
     let checkedChecks = document.querySelectorAll(".form-check-input:checked");
+    function showPriceDOM(){
+      document.getElementById('final_price').innerHTML = itemPrice.toFixed(2) + '$';
+    }
     function cleanChecks(){
       if (checkedChecks.length > max) {
         for (let i = 0; i < checkedChecks.length; i++){

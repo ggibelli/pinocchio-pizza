@@ -3,18 +3,22 @@ from django.urls import reverse_lazy
 from django.views import generic
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import DetailView
+from django.views.generic import CreateView, DetailView
 
+from orders.models import Order
 from .forms import CustomUserCreationForm
 
 
 class CustomerDetailView(LoginRequiredMixin, DetailView): 
     model = get_user_model()
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['orders'] = Order.objects.filter(customer=self.request.user.pk, is_confirmed=True).order_by('-time_created')
+        return context
     template_name = 'account/customer_detail.html'
 
-class SignupPageView(generic.CreateView):
+class SignupPageView(CreateView):
     form_class = CustomUserCreationForm
     success_url = reverse_lazy('login')
     template_name = 'signup.html'
 
-# Create your views here.
