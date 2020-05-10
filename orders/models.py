@@ -122,11 +122,11 @@ class MenuInstance(models.Model):
             if not self.pk: 
                 pass
             else:
-                price = price + decimal.Decimal(self.toppings.all().count() * 0.50)
+                price = decimal.Decimal(price) + decimal.Decimal(self.toppings.all().count() * 0.50)
         return decimal.Decimal(price)
 
     def is_valid_price(self):
-        return self.get_price > 0   
+        return self.price > 0   
 
     def __str__(self):
         return f'{self.kind}'

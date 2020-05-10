@@ -2,6 +2,8 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse, resolve
 
+from orders.models import Order
+
 
 
 class CustomUserTest(TestCase):
@@ -57,3 +59,34 @@ class SignupTests(TestCase):
         self.assertEqual(get_user_model().objects.all()[0].email, self.email)
         self.assertEqual(get_user_model().objects.all()[0].first_name, self.first_name)
         self.assertEqual(get_user_model().objects.all()[0].last_name, self.last_name)
+
+class CustomerDetailViewTests(TestCase):
+
+    def setUp(self):
+        User = get_user_model()
+        user = User.objects.create_user(
+            username = 'prova',
+            email = 'prova@prova.it',
+            password = 'prova123'
+        )
+        order = Order.objects.create(customer=user, is_confirmed=True, final_price=0)
+
+        
+
+    def test_customer_detail_template_loggedin(self):
+        self.client.login(email='prova@prova.it', password='prova123')
+        user = get_user_model().objects.get(username='prova')
+        self.response = self.client.get(reverse('profile', kwargs={'slug' : user.slug}))
+        self.assertEqual(self.response.status_code, 200)
+        self.assertEqual(self.response.context['orders'].count(), 1)
+        self.assertTemplateUsed(self.response, 'account/customer_detail.html')
+        self.assertContains(self.response, 'Your homepage')
+        self.assertNotContains(self.response, 'Pippopooppo')
+
+    def test_customer_detail_template_loggedout(self):
+        self.client.logout()
+        response = self.client.get(reverse('profile', kwargs={'slug' : 'prova'}))
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, '%s?next=/users/prova/' % (reverse('account_login'))) 
+        response = self.client.get('%s?next=/users/prova/' % (reverse('account_login'))) 
+        self.assertContains(response, 'Log In')
