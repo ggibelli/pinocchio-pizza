@@ -1,5 +1,4 @@
 import stripe
-import json,ast
 
 from django.conf import settings
 from django.contrib import messages
@@ -70,9 +69,8 @@ class OrderEditView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     permission_required = 'orders.special_status'
     form_class = OrderForm
     template_name = 'orders/order_edit.html'
-    def get_success_url(self):
-        return reverse_lazy('order-list')
-
+    success_url = reverse_lazy('order-list')
+    
 class CartUpdateView(LoginRequiredMixin, UpdateView):
     model = Order
     form_class = CartForm
@@ -84,7 +82,6 @@ class CartUpdateView(LoginRequiredMixin, UpdateView):
             raise Http404("Order does not exist")
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['stripe_key'] = settings.STRIPE_TEST_PUBLISHABLE_KEY
         context['order'] = self.object
         context['helper'] = MyFormSetHelper()
         if self.request.POST:

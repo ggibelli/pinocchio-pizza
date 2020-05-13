@@ -15,16 +15,31 @@ class OrdersModelsTest(TestCase):
             password = 'prova123'
         )
         category = Category.objects.create(name='Subs')
-        category2 = Category.objects.create(name='Salad')
-        pizza = MenuItem.objects.create(
-            name = 'bbb',
+        category2 = Category.objects.create(name='Dinners')
+        category3 = Category.objects.create(name='Salad')
+        category4 = Category.objects.create(name='Salad')
+        item_sub = MenuItem.objects.create(
+            name = 'sub',
             category=category,
             price = 5.0,
             price_large = 10.0
         )
-        sub = MenuItem.objects.create(
-            name = 'ccc',
+        item_dinner = MenuItem.objects.create(
+            name = 'dinner',
             category=category2,
+            price = 20.0,
+            price_large = 25.0
+        )
+
+        item_salad = MenuItem.objects.create(
+            name = 'salad',
+            category=category3,
+            price = 20.0,
+        )
+
+        item_pizza = MenuItem.objects.create(
+            name = 'pizza',
+            category=category4,
             price = 20.0,
             price_large = 25.0
         )
@@ -33,25 +48,27 @@ class OrdersModelsTest(TestCase):
         tops3 = Topping.objects.create(name='cab')
         pizza = MenuInstance.objects.create(
             customer = user,
-            kind = pizza,
+            kind = item_pizza,
             size = 'Small',
             n_items = 1,
         )
         pizza.toppings.add(tops1, tops2)
         sub = MenuInstance.objects.create(
             customer = user,
-            kind = sub,
+            kind = item_sub,
             size = 'Large',
             n_items = 2,
         )
         sub.toppings.add(tops3)
+        pizza.n_items = 2
+        pizza.save()
         
 
     def test_dishes_count(self):
-        self.assertEqual(MenuItem.objects.count(), 2)
+        self.assertEqual(MenuItem.objects.count(), 4)
 
     def test_is_valid_menu(self):
-        sub = MenuItem.objects.get(name='bbb')
+        sub = MenuItem.objects.get(name='sub')
         self.assertTrue(sub.is_valid_price())
 
     def test_is_valid_instance(self):
@@ -59,7 +76,7 @@ class OrdersModelsTest(TestCase):
         self.assertTrue(pizza.is_valid_price())
 
     def test_pizza_ntoppings(self):
-        kind = MenuItem.objects.get(name='bbb')
+        kind = MenuItem.objects.get(name='pizza')
         pizza = MenuInstance.objects.get(kind=kind)
         self.assertEqual(pizza.toppings.count(), 2)
 
@@ -92,21 +109,18 @@ class OrdersModelsTest(TestCase):
         order = Order.objects.all()[0]
         self.assertEqual(order.items.count(), 2)
 
-    def test_menu_view(self):
-        self.response = self.client.get(reverse('menu'))
-        self.assertEqual(self.response.status_code, 200)
-        self.assertTemplateUsed(self.response, 'orders/menu.html')
-        self.assertEqual(self.response.context['items'].count(), 2)
-        self.assertEqual(self.response.context['toppings'].count(), 3)
-        self.assertEqual(self.response.context['categories'].count(), 2)
-        self.assertContains(self.response, 'Menu')
-        self.assertNotContains(self.response, 'Pippopooppo')
+    def test_item_count_after_delete(self):
+        order = Order.objects.all()[0]
+        MenuInstance.objects.all()[0].delete()
+        self.assertEqual(order.items.count(), 1)
 
-    def test_item_create_view(self):
-        self.client.login(email='prova@prova.it', password='prova123')
-        category = Category.objects.get(name='Subs')
-        self.response = self.client.get(reverse('additem', kwargs={'category' : category.slug}))
-        self.assertEqual(self.response.status_code, 200)
+    def test_category_property(self):
+        kind = MenuItem.objects.get(name='sub')
+        sub = MenuInstance.objects.get(kind=kind)
+        self.assertEqual(sub.category, 'Subs')
+
+
+
 
 
 

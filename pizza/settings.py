@@ -41,7 +41,9 @@ INSTALLED_APPS = [
     # Third party
     'crispy_forms',
     'allauth',
-    'allauth.account', 
+    'allauth.account',
+    # Test coverage
+    'django_nose',
     # Local apps
     'users.apps.UsersConfig',
     'pages.apps.PagesConfig',
@@ -171,3 +173,11 @@ ACCOUNT_FORMS = {'signup': 'users.forms.CustomSignupForm'}
 # Stripe 
 STRIPE_TEST_PUBLISHABLE_KEY=os.environ.get('STRIPE_TEST_PUBLISHABLE_KEY') 
 STRIPE_TEST_SECRET_KEY=os.environ.get('STRIPE_TEST_SECRET_KEY')
+
+# Django-nose coverage
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+NOSE_ARGS = [
+    '--with-coverage',
+    '--cover-package=orders,users,pages',
+    '--cover-html'
+]

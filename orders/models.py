@@ -108,7 +108,7 @@ class MenuInstance(models.Model):
 
     @property
     def category(self):
-        return self.kind.category
+        return self.kind.category.name
 
     # Calling this get price to update the order price, when subs I need to count the toppings, 
     # so I skip the counting when instance created and calculate on M2M changed in signal
@@ -119,10 +119,7 @@ class MenuInstance(models.Model):
         elif self.size == LG:
             price = self.kind.price_large * self.n_items
         if self.kind.category.name == 'Subs':
-            if not self.pk: 
-                pass
-            else:
-                price = decimal.Decimal(price) + decimal.Decimal(self.toppings.all().count() * 0.50)
+            price = decimal.Decimal(price) + decimal.Decimal(self.toppings.all().count() * 0.50)
         return decimal.Decimal(price)
 
     def is_valid_price(self):
