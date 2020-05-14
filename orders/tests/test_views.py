@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Permission
 from django.test import TestCase, RequestFactory 
@@ -155,8 +156,6 @@ class OrdersViewsTest(TestCase):
         self.response = self.client.get(reverse('order-edit', kwargs={'pk' : order.pk}))
         self.assertEqual(self.response.status_code, 403)
 
-    
-
     def test_order_edit_view_with_permission_using_form(self):
         order = Order.objects.all()[0]
         self.client.login(email='prova@prova.it', password='prova123')
@@ -175,7 +174,6 @@ class OrdersViewsTest(TestCase):
         response = self.client.post(reverse('order-edit', kwargs={'pk' : order.pk,}), {'order_state': "Done", 'final_price': order.final_price})
         self.assertRedirects(response, reverse('order-list'))
 
-
     def test_cart_update_view_loggedout(self):
         order = Order.objects.all()[0]
         self.response = self.client.get(reverse('cart', kwargs={'pk' : order.pk}))
@@ -186,6 +184,14 @@ class OrdersViewsTest(TestCase):
         self.client.login(email='prova@prova.it', password='prova123')
         self.user.user_permissions.add(self.special_permission)
         self.response = self.client.get(reverse('order-edit', kwargs={'pk' : 123}))
+        self.assertEqual(self.response.status_code, 404)
+
+    def test_cart_view_wrong_order(self):
+        order = Order.objects.all()[0]
+        order.is_confirmed = True
+        order.save()
+        self.client.login(email='prova@prova.it', password='prova123')
+        self.response = self.client.get(reverse('cart', kwargs={'pk' : order.pk}))
         self.assertEqual(self.response.status_code, 404)
 
     def test_cart_update_view_with_permission_using_form(self):
@@ -212,19 +218,19 @@ class OrdersViewsTest(TestCase):
         self.assertTemplateUsed(response, 'orders/shoppingcart.html')
         self.assertContains(response, 'Cart')
         self.assertNotContains(response, 'Pippopooppo')
-        self.assertTrue(response.context['order'], order)
-        self.assertTrue(response.context['item'], formset)
-        self.assertTrue(response.context['item'], MyFormSetHelper())
+        self.assertTrue(response.context['order'])
+        self.assertTrue(response.context['item'])
+        self.assertTrue(response.context['item'])
 
-
-    '''def test_cart_update_view_with_permission_using_post(self):
+    def test_cart_update_view_using_post(self):
         order = Order.objects.all()[0]
         items = []
         for item in MenuInstance.objects.all():
             items.append(item)
         self.client.login(email='prova@prova.it', password='prova123')
         response = self.client.get(reverse('cart', kwargs={'pk' : order.pk}))
-        formset = OrderFormset({
+        post_data = {
+            'is_confirmed': 'False',
             'items-INITIAL_FORMS': '2',
             'items-TOTAL_FORMS': '2',
             'items-MAX_NUM_FORMS': '',
@@ -236,8 +242,23 @@ class OrdersViewsTest(TestCase):
             'items-1-size': 'Large',
             'items-1-n_items': '2',
             'items-1-id': items[0].pk,
-        })
-        response = self.client.post(reverse('order-edit', kwargs={'pk' : order.pk,}), {'order_state': "Done", 'final_price': order.final_price})
-        self.assertRedirects(response, reverse('order-list'))'''
+        }
+        response = self.client.post(reverse('cart', kwargs={'pk' : order.pk}), post_data)
+        self.assertRedirects(response, reverse('confirm-cart', kwargs={'pk' : order.pk}))
+
+    def test_confirm_order_view(self):
+        order = Order.objects.all()[0]
+        self.client.login(email='prova@prova.it', password='prova123')
+        self.response = self.client.get(reverse('confirm-cart', kwargs={'pk' : order.pk}))
+        self.assertEqual(self.response.status_code, 200)
+        self.assertTemplateUsed(self.response, 'orders/confirm_order.html')
+        self.assertTrue(self.response.context['stripe_key'])
+        self.assertNotContains(self.response, 'Pippopooppo')
+
+    def test_charge_stripe(self):
+        order = Order.objects.all()[0]
+        self.client.login(email='prova@prova.it', password='prova123')
+        response = self.client.post(reverse('charge'), {'order-amount': order.final_price * 100, 'order-id': order.pk})
+        self.assertEqual(response.status_code, 302)
 
     

@@ -92,7 +92,7 @@
     <p id="t39" class="run"><span class="n"><a href="#t39">39</a></span><span class="t">    <span class="key">if</span> <span class="nam">instance</span><span class="op">.</span><span class="nam">order_state</span> <span class="op">==</span> <span class="str">'Done'</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p id="t40" class="run"><span class="n"><a href="#t40">40</a></span><span class="t">        <span class="nam">subject</span> <span class="op">=</span> <span class="str">f'The order n. {instance.id} is ready'</span>&nbsp;</span><span class="r"></span></p>
     <p id="t41" class="run"><span class="n"><a href="#t41">41</a></span><span class="t">        <span class="nam">message</span> <span class="op">=</span> <span class="str">f'You can pick up now your items'</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t42" class="run"><span class="n"><a href="#t42">42</a></span><span class="t">        <span class="nam">email_from</span> <span class="op">=</span> <span class="nam">settings</span><span class="op">.</span><span class="nam">EMAIL_HOST_USER</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t42" class="run"><span class="n"><a href="#t42">42</a></span><span class="t">        <span class="nam">email_from</span> <span class="op">=</span> <span class="nam">settings</span><span class="op">.</span><span class="nam">DEFAULT_FROM_EMAIL</span>&nbsp;</span><span class="r"></span></p>
     <p id="t43" class="run"><span class="n"><a href="#t43">43</a></span><span class="t">        <span class="nam">recipient_list</span> <span class="op">=</span> <span class="op">[</span><span class="nam">instance</span><span class="op">.</span><span class="nam">customer</span><span class="op">.</span><span class="nam">email</span><span class="op">,</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
     <p id="t44" class="run"><span class="n"><a href="#t44">44</a></span><span class="t">        <span class="nam">send_mail</span><span class="op">(</span> <span class="nam">subject</span><span class="op">,</span> <span class="nam">message</span><span class="op">,</span> <span class="nam">email_from</span><span class="op">,</span> <span class="nam">recipient_list</span> <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p id="t45" class="pln"><span class="n"><a href="#t45">45</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
@@ -116,7 +116,7 @@
     <div class="content">
         <p>
             <a class="nav" href="index.html">&#xab; index</a> &nbsp; &nbsp; <a class="nav" href="https://coverage.readthedocs.io">coverage.py v5.1</a>,
-            created at 2020-05-13 07:24
+            created at 2020-05-14 08:08
         </p>
     </div>
 </div>

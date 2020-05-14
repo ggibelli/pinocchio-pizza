@@ -96,15 +96,11 @@ class CartUpdateView(LoginRequiredMixin, UpdateView):
         if item.is_valid():
             item.instance = self.object
             item.save()
-        if item.instance.items.count() == 0:
-            Order.objects.get(id=item.instance.id).delete()
         return super().form_valid(form)
         
     def get_success_url(self):
-        context = self.get_context_data()
-        item = context['item']
-        if item.instance.items.count() == 0:
-            Order.objects.get(id=item.instance.id).delete()
+        if self.object.items.count() == 0:
+            Order.objects.get(id=self.object.id).delete()
             return reverse_lazy('menu')
         return reverse_lazy('confirm-cart', kwargs={'pk' : self.object.pk})
 
@@ -114,6 +110,11 @@ class OrderDeleteView(LoginRequiredMixin, DeleteView):
 
 class ConfirmOrderView(LoginRequiredMixin, DetailView):
     model = Order
+    def get_object(self):
+        try:
+            return Order.objects.get(customer=self.request.user.pk, is_confirmed=False)
+        except Order.DoesNotExist:
+            raise Http404("Order does not exist")
     object_name = 'order'
     template_name = 'orders/confirm_order.html'
     def get_context_data(self, **kwargs):
@@ -130,14 +131,14 @@ def charge(request):
             charge = stripe.Charge.create(
                 amount=amount,
                 currency='usd', 
-                description='Purchase all books', 
+                description='Pizzeria dish', 
                 source=request.POST.get('stripeToken')
                 )
             order.is_confirmed = True
             order.save()
             subject = f'Thanks for your order n. {order.id} of {order.final_price}$'
             message = f"Your order was processed correctly, \nyou'll receive a second email when ready"
-            email_from = settings.EMAIL_HOST_USER
+            email_from = settings.DEFAULT_FROM_EMAIL
             recipient_list = [order.customer.email,]
             send_mail( subject, message, email_from, recipient_list )
         except stripe.error.CardError as e:

@@ -158,7 +158,14 @@ AUTHENTICATION_BACKENDS = (
     'allauth.account.auth_backends.AuthenticationBackend',
 )
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+DEFAULT_FROM_EMAIL = 'giogibelli@icloud.com'
+
+EMAIL_HOST = 'smtp.sendgrid.net' 
+EMAIL_HOST_USER = 'apikey' 
+EMAIL_HOST_PASSWORD = os.environ.get('SENDGRID_PASSWORD')
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
 
 ACCOUNT_SESSION_REMEMBER = True
 ACCOUNT_USERNAME_REQUIRED = False
@@ -166,9 +173,7 @@ ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
 
-DEFAULT_FROM_EMAIL = 'admin@pinocchiospizza.com'
 
-ACCOUNT_FORMS = {'signup': 'users.forms.CustomSignupForm'}
 
 # Stripe 
 STRIPE_TEST_PUBLISHABLE_KEY=os.environ.get('STRIPE_TEST_PUBLISHABLE_KEY') 
@@ -181,3 +186,5 @@ NOSE_ARGS = [
     '--cover-package=orders,users,pages',
     '--cover-html'
 ]
+
+ACCOUNT_FORMS = {'signup': 'users.forms.CustomSignupForm'}

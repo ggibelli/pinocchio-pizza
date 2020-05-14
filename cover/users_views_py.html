@@ -56,11 +56,11 @@
     <p id="t3" class="run"><span class="n"><a href="#t3">3</a></span><span class="t"><span class="key">from</span> <span class="nam">django</span><span class="op">.</span><span class="nam">views</span> <span class="key">import</span> <span class="nam">generic</span>&nbsp;</span><span class="r"></span></p>
     <p id="t4" class="run"><span class="n"><a href="#t4">4</a></span><span class="t"><span class="key">from</span> <span class="nam">django</span><span class="op">.</span><span class="nam">contrib</span><span class="op">.</span><span class="nam">auth</span> <span class="key">import</span> <span class="nam">get_user_model</span>&nbsp;</span><span class="r"></span></p>
     <p id="t5" class="run"><span class="n"><a href="#t5">5</a></span><span class="t"><span class="key">from</span> <span class="nam">django</span><span class="op">.</span><span class="nam">contrib</span><span class="op">.</span><span class="nam">auth</span><span class="op">.</span><span class="nam">mixins</span> <span class="key">import</span> <span class="nam">LoginRequiredMixin</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t6" class="run"><span class="n"><a href="#t6">6</a></span><span class="t"><span class="key">from</span> <span class="nam">django</span><span class="op">.</span><span class="nam">views</span><span class="op">.</span><span class="nam">generic</span> <span class="key">import</span> <span class="nam">CreateView</span><span class="op">,</span> <span class="nam">DetailView</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t6" class="run"><span class="n"><a href="#t6">6</a></span><span class="t"><span class="key">from</span> <span class="nam">django</span><span class="op">.</span><span class="nam">views</span><span class="op">.</span><span class="nam">generic</span> <span class="key">import</span> <span class="nam">CreateView</span><span class="op">,</span> <span class="nam">DetailView</span><span class="op">,</span> <span class="nam">UpdateView</span>&nbsp;</span><span class="r"></span></p>
     <p id="t7" class="pln"><span class="n"><a href="#t7">7</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p id="t8" class="run"><span class="n"><a href="#t8">8</a></span><span class="t"><span class="key">from</span> <span class="nam">orders</span><span class="op">.</span><span class="nam">models</span> <span class="key">import</span> <span class="nam">Order</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t9" class="run"><span class="n"><a href="#t9">9</a></span><span class="t"><span class="key">from</span> <span class="op">.</span><span class="nam">forms</span> <span class="key">import</span> <span class="nam">CustomUserCreationForm</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t10" class="pln"><span class="n"><a href="#t10">10</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p id="t9" class="pln"><span class="n"><a href="#t9">9</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p id="t10" class="run"><span class="n"><a href="#t10">10</a></span><span class="t"><span class="key">from</span> <span class="op">.</span><span class="nam">forms</span> <span class="key">import</span> <span class="nam">CustomSignupForm</span><span class="op">,</span> <span class="nam">CustomUserCreationForm</span>&nbsp;</span><span class="r"></span></p>
     <p id="t11" class="pln"><span class="n"><a href="#t11">11</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p id="t12" class="run"><span class="n"><a href="#t12">12</a></span><span class="t"><span class="key">class</span> <span class="nam">CustomerDetailView</span><span class="op">(</span><span class="nam">LoginRequiredMixin</span><span class="op">,</span> <span class="nam">DetailView</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p id="t13" class="run"><span class="n"><a href="#t13">13</a></span><span class="t">    <span class="nam">model</span> <span class="op">=</span> <span class="nam">get_user_model</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
@@ -71,16 +71,17 @@
     <p id="t18" class="run"><span class="n"><a href="#t18">18</a></span><span class="t">    <span class="nam">template_name</span> <span class="op">=</span> <span class="str">'account/customer_detail.html'</span>&nbsp;</span><span class="r"></span></p>
     <p id="t19" class="pln"><span class="n"><a href="#t19">19</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p id="t20" class="run"><span class="n"><a href="#t20">20</a></span><span class="t"><span class="key">class</span> <span class="nam">SignupPageView</span><span class="op">(</span><span class="nam">CreateView</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t21" class="run"><span class="n"><a href="#t21">21</a></span><span class="t">    <span class="nam">form_class</span> <span class="op">=</span> <span class="nam">CustomUserCreationForm</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t22" class="run"><span class="n"><a href="#t22">22</a></span><span class="t">    <span class="nam">success_url</span> <span class="op">=</span> <span class="nam">reverse_lazy</span><span class="op">(</span><span class="str">'login'</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t23" class="run"><span class="n"><a href="#t23">23</a></span><span class="t">    <span class="nam">template_name</span> <span class="op">=</span> <span class="str">'signup.html'</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t21" class="run"><span class="n"><a href="#t21">21</a></span><span class="t">    <span class="nam">form_class</span> <span class="op">=</span> <span class="nam">CustomSignupForm</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t22" class="run"><span class="n"><a href="#t22">22</a></span><span class="t">    <span class="nam">success_url</span> <span class="op">=</span> <span class="nam">reverse_lazy</span><span class="op">(</span><span class="str">'home'</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t23" class="run"><span class="n"><a href="#t23">23</a></span><span class="t">    <span class="nam">template_name</span> <span class="op">=</span> <span class="str">'account/signup.html'</span>&nbsp;</span><span class="r"></span></p>
     <p id="t24" class="pln"><span class="n"><a href="#t24">24</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p id="t25" class="pln"><span class="n"><a href="#t25">25</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
 </div>
 <div id="footer">
     <div class="content">
         <p>
             <a class="nav" href="index.html">&#xab; index</a> &nbsp; &nbsp; <a class="nav" href="https://coverage.readthedocs.io">coverage.py v5.1</a>,
-            created at 2020-05-11 07:43
+            created at 2020-05-14 06:59
         </p>
     </div>
 </div>

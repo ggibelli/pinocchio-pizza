@@ -3,11 +3,11 @@ from django.urls import reverse_lazy
 from django.views import generic
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import CreateView, DetailView
+from django.views.generic import CreateView, DetailView, UpdateView
 
 from orders.models import Order
-from .forms import CustomUserCreationForm
 
+from .forms import CustomSignupForm, CustomUserCreationForm
 
 class CustomerDetailView(LoginRequiredMixin, DetailView): 
     model = get_user_model()
@@ -18,7 +18,8 @@ class CustomerDetailView(LoginRequiredMixin, DetailView):
     template_name = 'account/customer_detail.html'
 
 class SignupPageView(CreateView):
-    form_class = CustomUserCreationForm
-    success_url = reverse_lazy('login')
-    template_name = 'signup.html'
+    form_class = CustomSignupForm
+    success_url = reverse_lazy('home')
+    template_name = 'account/signup.html'
+
 

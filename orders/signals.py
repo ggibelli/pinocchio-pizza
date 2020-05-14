@@ -39,7 +39,7 @@ def order_ready(sender, instance, **kwargs):
     if instance.order_state == 'Done':
         subject = f'The order n. {instance.id} is ready'
         message = f'You can pick up now your items'
-        email_from = settings.EMAIL_HOST_USER
+        email_from = settings.DEFAULT_FROM_EMAIL
         recipient_list = [instance.customer.email,]
         send_mail( subject, message, email_from, recipient_list )
 
