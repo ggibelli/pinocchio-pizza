@@ -1,0 +1,19 @@
+/* static/css/base.css */
+h1 {
+  color: red;
+  }
+
+
+
+table { 
+  empty-cells:show; 
+}
+
+tr {
+  height: 47px;
+}
+
+th, td {
+  vertical-align: middle;
+  width: 33px;
+}
