@@ -13,12 +13,13 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf import settings
 from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
     # Django admin
-    path('admin/', admin.site.urls),
+    path('pinocchio-manager/', admin.site.urls),
     
     # Local apps
     path('', include('pages.urls')),
@@ -27,3 +28,6 @@ urlpatterns = [
     # Users management
     path('accounts/', include('allauth.urls')),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
