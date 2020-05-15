@@ -9,4 +9,4 @@ setup:
     command:
       - python manage.py collectstatic --noinput
   run:
-    web: gunicorn pizza.wsgi
+    web: gunicorn pizzaproject.wsgi
