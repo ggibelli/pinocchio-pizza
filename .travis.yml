@@ -11,7 +11,7 @@ before_script:
 
 
 script:
-  - docker-compose exec web python manage.py test
+  - docker-compose -f docker-compose-travis.yml exec web python manage.py test
 
 deploy:
   provider: heroku
