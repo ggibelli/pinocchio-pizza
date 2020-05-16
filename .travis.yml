@@ -10,8 +10,8 @@ before_script:
   - docker-compose up -d --build  
 
 script: 
-  - docker-compose exec web coverage run --source='.' manage.py test
-  
+  - docker-compose exec web python manage.py test
+
 deploy:
   provider: heroku
   api_key: $HEROKU_API_KEY
