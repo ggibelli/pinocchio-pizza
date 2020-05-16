@@ -1,0 +1,10 @@
+#vscode files
+.vscode
+#mac files
+*DS_Store
+#coverage files
+cover/
+.coverage
+#docker-compose files with API keys
+docker-compose.yml
+docker-compose-prod.yml
