@@ -1,0 +1,25 @@
+version: '3.7'
+
+services:
+  web:
+    build: .
+    #command: python /code/manage.py runserver 0.0.0.0:8000
+    command: gunicorn pizza.wsgi -b 0.0.0.0:8000 
+    environment: 
+      - ENVIRONMENT=production
+      - DEBUG=
+      - STRIPE_TEST_PUBLISHABLE_KEY=pk_test_XTvFZZsFJOMvhwOh6xGQZVzO00dKGJR16n
+      
+    volumes:
+      - .:/code
+    ports:
+      - 8000:8000
+    depends_on:
+      - db
+  db:
+    image: postgres:12
+    
+    environment:
+      - "POSTGRES_HOST_AUTH_METHOD=trust"
+
+
