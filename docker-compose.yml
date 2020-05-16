@@ -3,9 +3,10 @@ version: '3.7'
 services:
   web:
     build: .
-    command: ['./run.sh']
     #command: python /code/manage.py runserver 0.0.0.0:8000
-    command: gunicorn pizza.wsgi -b 0.0.0.0:8000 
+    command: 
+      - ['./run.sh']
+      - gunicorn pizza.wsgi -b 0.0.0.0:8000 
     environment: 
       - ENVIRONMENT=development
       - DEBUG=1
