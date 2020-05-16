@@ -5,9 +5,9 @@ services:
     build: .
     command: gunicorn pizza.wsgi -b 0.0.0.0:8000 
     environment: 
-      - ENVIRONMENT=production
+      - ENVIRONMENT=development
       - SECRET_KEY=(g*525o8h3_ub&y(oh*_h7)9^269+ox7@ty6#5rpugjnu!i7*l
-      - DEBUG=
+      - DEBUG=1
       - STRIPE_TEST_PUBLISHABLE_KEY=pk_test_XTvFZZsFJOMvhwOh6xGQZVzO00dKGJR16n
     volumes:
       - .:/code
