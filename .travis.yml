@@ -13,6 +13,7 @@ script:
 deploy:
   provider: heroku
   api_key: $HEROKU_API_KEY
+  strategy: git
   app: cs50web-project3-pizza
   run: python manage.py migrate
   on: master
