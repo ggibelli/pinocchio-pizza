@@ -26,6 +26,8 @@
               <img src="{% static 'images/'|add:category.slug|add:'.jpg' %}" class="img-thumbnail" alt="{{category}}">
           </div>
         </a>
+        {% empty %}
+        <h4>No dishes yet</h4>
         {% endfor %}
         
       </ul>
