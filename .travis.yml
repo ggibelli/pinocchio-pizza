@@ -10,8 +10,7 @@ before_script: pip install docker-compose && docker-compose up -d --build
 script:
   - docker-compose exec web python manage.py test
 after_success:
-  - docker-compose exec web coveralls
-
+  - docker-compose run web sh -c "coverage run manage.py test && TRAVIS_JOB_ID=$TRAVIS_JOB_ID TRAVIS_BRANCH=$TRAVIS_BRANCH COVERALLS_REPO_TOKEN=$COVERALLS_REPO_TOKEN coveralls"
 deploy:
   provider: heroku
   api_key: $HEROKU_API_KEY
