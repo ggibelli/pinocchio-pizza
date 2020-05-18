@@ -9,7 +9,7 @@ before_script: pip install docker-compose && docker-compose up -d --build
 
 script:
   - docker-compose run web coverage erase
-  - docker-compose run web coverage manage.py test
+  - docker-compose run web coverage run manage.py test
   - docker-compose run web coverage report
 after_success:
   - docker-compose run web sh -c "coverage run manage.py test && TRAVIS_JOB_ID=$TRAVIS_JOB_ID TRAVIS_BRANCH=$TRAVIS_BRANCH COVERALLS_REPO_TOKEN=$COVERALLS_REPO_TOKEN coveralls"
