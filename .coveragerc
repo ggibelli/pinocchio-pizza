@@ -1,5 +1,8 @@
 [run]
-source = .
+source = 
+    orders/ 
+    users/ 
+    pages/
 [report]
 fail_under = 75
 show_missing = True

@@ -185,11 +185,6 @@ STRIPE_TEST_SECRET_KEY=os.environ.get('STRIPE_TEST_SECRET_KEY')
 
 # Django-nose coverage
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
-NOSE_ARGS = [
-    '--with-coverage',
-    '--cover-package=orders,users,pages',
-    '--cover-html'
-]
 
 ACCOUNT_FORMS = {'signup': 'users.forms.CustomSignupForm'}
 
