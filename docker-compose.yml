@@ -3,12 +3,12 @@ version: '3.7'
 services:
   web:
     build: .
-    #command: python /code/manage.py runserver 0.0.0.0:8000
-    command: gunicorn pizza.wsgi -b 0.0.0.0:8000 
+    command: python /code/manage.py runserver 0.0.0.0:8000
+    #command: gunicorn pizza.wsgi -b 0.0.0.0:8000 
     environment: 
       - ENVIRONMENT=development
       - SECRET_KEY=(g*525o8h3_ub&y(oh*_h7)9^269+ox7@ty6#5rpugjnu!i7*l
-      - DEBUG=True
+      - DEBUG=1
       - STRIPE_TEST_PUBLISHABLE_KEY=pk_test_XTvFZZsFJOMvhwOh6xGQZVzO00dKGJR16n
     volumes:
       - .:/code

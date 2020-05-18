@@ -8,9 +8,6 @@ from crispy_forms.layout import Submit, Layout, Field, Fieldset
 from crispy_forms.bootstrap import *
 
 
-
-
-
 from .models import Category, MenuItem, MenuInstance, Order, Topping
 
 class MenuForm(forms.ModelForm):
@@ -27,7 +24,7 @@ class MenuForm(forms.ModelForm):
         self.fields['toppings'].widget = CheckboxSelectMultiple()
         if category == 'pasta' or category == 'salad' or category == 'dinner-platters':
             self.fields['toppings'].widget = forms.HiddenInput()
-            if category == 'salad':
+            if category == 'salad' or category == 'pasta':
                 self.fields['size'].widget = forms.HiddenInput()
         elif category == 'subs':
             self.fields["toppings"].queryset = Topping.objects.filter(is_topping_subs=True)
@@ -47,10 +44,6 @@ class CartForm(forms.ModelForm):
                
 OrderFormset = inlineformset_factory(
     Order, MenuInstance, fields=('kind', 'size', 'n_items'), extra=0)
-
-#OrderFormset = inlineformset_factory(
-#    Order, MenuInstance, fields=('n_items', 'size'), extra=0
-#)
 
 class MyFormSetHelper(FormHelper):
     def __init__(self, *args, **kwargs):
