@@ -8,6 +8,7 @@ services:
 before_script: pip install docker-compose && docker-compose up -d --build
 
 script:
+  - docker-compose exec web coverage erase
   - docker-compose exec web python manage.py test
 after_success:
   - docker-compose run web sh -c "coverage run manage.py test && TRAVIS_JOB_ID=$TRAVIS_JOB_ID TRAVIS_BRANCH=$TRAVIS_BRANCH COVERALLS_REPO_TOKEN=$COVERALLS_REPO_TOKEN coveralls"
@@ -16,5 +17,5 @@ deploy:
   api_key: $HEROKU_API_KEY
   strategy: git
   app: cs50web-project3-pizza
-  run: python manage.py migrate
+  run: python manage.py makemigrations && python manage.py migrate
   on: master
