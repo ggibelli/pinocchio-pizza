@@ -1,4 +1,5 @@
 import stripe
+import smtplib
 
 from django.conf import settings
 from django.contrib import messages
@@ -140,13 +141,9 @@ def charge(request):
             message = f"Your order was processed correctly, \nyou'll receive a second email when ready"
             email_from = settings.DEFAULT_FROM_EMAIL
             recipient_list = [order.customer.email,]
-            send_mail( subject, message, email_from, recipient_list )
+            send_mail(subject, message, email_from, recipient_list)
+                
         except stripe.error.CardError as e:
-            # Since it's a decline, stripe.error.CardError will be caught
-            #body = e.json_body
-            #err  = body.get('error', {})
-            
-            # Attach the entire error string as JSON
             messages.error(request, e.error.message)
         except stripe.error.RateLimitError as e:
             messages.error(request, 'Rate limit error')
@@ -158,18 +155,21 @@ def charge(request):
             messages.error(request, 'Network error')
         except stripe.error.StripeError as e:
             messages.error(request, 'Something wrong, please try again')
-
+        except smtplib.SMTPSenderRefused as e:
+            messages.error(request, 'Email server down')
+        except Exception as e:
+            messages.error(request, "Server error, the webmaster's been notified")
         return redirect('post_payment', cart_id = order.id)
 
 def post_payment(request, cart_id):
     template = 'orders/charge.html'
     context = {}
-
     storage = messages.get_messages(request)
     for message in storage:
-
-        context['message'] = message.message
-        context['cart_id'] = cart_id
+        if message.level >= 40:
+            context['error'] = True
+            context['message'] = message.message
+            context['cart_id'] = cart_id
 
     return render(request, template, context)
 

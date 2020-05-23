@@ -2,7 +2,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Permission
 from django.test import TestCase, RequestFactory 
-from django.urls import reverse, resolve
+from django.urls import reverse, resolve, reverse_lazy
 
 
 from orders.models import Category, MenuInstance, Order, MenuItem, Topping
@@ -246,6 +246,33 @@ class OrdersViewsTest(TestCase):
         response = self.client.post(reverse('cart', kwargs={'pk' : order.pk}), post_data)
         self.assertRedirects(response, reverse('confirm-cart', kwargs={'pk' : order.pk}))
 
+    def test_cart_update_view_deleting_item(self):
+        order = Order.objects.all()[0]
+        items = []
+        for item in MenuInstance.objects.all():
+            items.append(item)
+        self.client.login(email='prova@prova.it', password='prova123')
+        response = self.client.get(reverse('cart', kwargs={'pk' : order.pk}))
+        post_data = {
+            'is_confirmed': 'False',
+            'items-INITIAL_FORMS': '2',
+            'items-TOTAL_FORMS': '2',
+            'items-MAX_NUM_FORMS': '',
+            'items-0-kind': items[1].kind.pk,
+            'items-0-size': 'Small',
+            'items-0-n_items': '1',
+            'items-0-id': items[1].pk,
+            'items-0-DELETE': True,
+            'items-1-kind': items[0].kind.pk,
+            'items-1-size': 'Large',
+            'items-1-n_items': '2',
+            'items-1-id': items[0].pk,
+            'items-1-DELETE': True,
+        }
+        
+        response = self.client.post(reverse('cart', kwargs={'pk' : order.pk}), post_data)
+        self.assertRedirects(response, reverse_lazy('menu'))
+
     def test_confirm_order_view(self):
         order = Order.objects.all()[0]
         self.client.login(email='prova@prova.it', password='prova123')
@@ -254,6 +281,15 @@ class OrdersViewsTest(TestCase):
         self.assertTemplateUsed(self.response, 'orders/confirm_order.html')
         self.assertTrue(self.response.context['stripe_key'])
         self.assertNotContains(self.response, 'Pippopooppo')
+
+    def test_confirm_order_view_no_order(self):
+        order = Order.objects.all()[0]
+        order.is_confirmed = True
+        order.save()
+        self.client.login(email='prova@prova.it', password='prova123')
+        self.response = self.client.get(reverse('confirm-cart', kwargs={'pk' : order.pk}))
+        self.assertEqual(self.response.status_code, 404)
+
 
     def test_charge_stripe(self):
         order = Order.objects.all()[0]
