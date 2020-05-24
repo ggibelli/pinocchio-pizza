@@ -7,13 +7,31 @@ h1 {
 
 table { 
   empty-cells:show; 
+  vertical-align: middle;
 }
 
 tr {
-  height: 47px;
+  height: 57px;
 }
 
 th, td {
-  vertical-align: middle;
-  width: 33px;
+  overflow: hidden;
+  vertical-align: middle !important;
+  height: 47px;
+}
+
+.items {
+  width: 10rem;
+}
+
+.size {
+  width: 10rem;
+}
+
+.menu {
+  height: 310px;
+}
+
+#dish-list li:nth-of-type(1n+10) {
+  display: none;
 }

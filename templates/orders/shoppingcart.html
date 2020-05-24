@@ -4,18 +4,18 @@
 {% load crispy_forms_tags %}
 <h1>Shopping cart</h1>
 <div class="row no-gutters align-items-bottom">
-    <div class="col-3 my-top" style="margin-top: 16px;">
+    <div class="col-auto my-top" style="margin-top: 16px;">
         <table class="table table-sm">
             <thead>
                 <tr>
-                    <th>Category</th>
+                    <th>Dish</th>
                 </tr>
 
             </thead>
             <tbody>
                 {% for item in order.items.all %}
                 <tr>
-                    <td class="align-middle {{item.category}}">{{item.category}}</td>
+                    <td class="align-middle dish">{{item.category}}-{{item.dish}}</td>
                 </tr>
                 {% endfor %}
                 <tr>
@@ -24,7 +24,7 @@
             </tbody>
         </table>
     </div>
-    <div class="col-7 order-1 my-top">
+    <div class="col-auto order-1 my-top">
         <form method="post">
             {% csrf_token %}
             
@@ -38,7 +38,7 @@
         </form>
         
     </div>
-    <div class="col-2 order-12" style="margin-top: 16px;">
+    <div class="col-auto order-12" style="margin-top: 16px;">
         <table class="table table-sm">
             <thead>
                 <tr>
@@ -66,7 +66,7 @@
   const items = [];
   {% for item in order.items.all %}
   items.push({idCSS:'id_items-0', itemID:'{{item.id}}', itemCategory:'{{item.category}}', 
-    itemPrice:'{{item.kind.price}}', itemPriceLarge:'{{item.kind.price_large}}', itemSize:'{{item.size}}', 
+    itemPrice:'{{item.dish.price}}', itemPriceLarge:'{{item.dish.price_large}}', itemSize:'{{item.size}}', 
     nItems:'{{item.n_items}}', get price(){
         if (this.itemSize == 'Large') {
             return this.itemPriceLarge * this.nItems;

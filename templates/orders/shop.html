@@ -17,7 +17,7 @@
                 {% for item in order.items.all %}
                 <tr>
                     <td class="align-middle {{item.category}}">{{item.category}}</td>
-                    <td class="align-middle">{{item.kind}}</td>
+                    <td class="align-middle">{{item.dish}}</td>
                 </tr>
                 {% endfor %}
                 <tr>
@@ -68,7 +68,7 @@
   const items = [];
   {% for item in order.items.all %}
   items.push({idCSS:'id_items-0', itemID:'{{item.id}}', itemCategory:'{{item.category}}', 
-    itemPrice:'{{item.kind.price}}', itemPriceLarge:'{{item.kind.price_large}}', itemSize:'{{item.size}}', 
+    itemPrice:'{{item.dish.price}}', itemPriceLarge:'{{item.dish.price_large}}', itemSize:'{{item.size}}', 
     nItems:'{{item.n_items}}', get price(){
         if (this.itemSize == 'Large') {
             return this.itemPriceLarge * this.nItems;

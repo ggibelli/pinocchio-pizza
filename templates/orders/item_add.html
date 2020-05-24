@@ -35,7 +35,7 @@
   items.push({name:'{{item.name}}', price:'{{item.price}}', price_large:'{{item.price_large}}'});
   {% endfor %}
   document.addEventListener('DOMContentLoaded', () => { 
-    const itemKind = document.getElementById('id_kind');
+    const itemdish = document.getElementById('id_dish');
     const itemSize = document.getElementById('id_size');
     let itemPrice;
     let isSub = false;
@@ -55,7 +55,7 @@
     let currentItem
     form.addEventListener('change', function() {
       let n_items = document.getElementById('id_n_items').value
-      currentItem = itemKind.options[itemKind.selectedIndex].text;
+      currentItem = itemdish.options[itemdish.selectedIndex].text;
       let currentSize;
       if (itemSize.value == 'Small'){
         currentSize = 'Small';

@@ -55,14 +55,14 @@ class OrdersViewsTest(TestCase):
         tops3 = Topping.objects.create(name='cab')
         pizza = MenuInstance.objects.create(
             customer = self.user,
-            kind = item_pizza,
+            dish = item_pizza,
             size = 'Small',
             n_items = 1,
         )
         pizza.toppings.add(tops1, tops2)
         sub = MenuInstance.objects.create(
             customer = self.user,
-            kind = item_sub,
+            dish = item_sub,
             size = 'Large',
             n_items = 2,
         )
@@ -107,7 +107,7 @@ class OrdersViewsTest(TestCase):
         user = get_user_model().objects.get(username='prova')
         request = self.factory.get(reverse('additem', kwargs={'category' : category.slug}))
         request.user = user
-        form = MenuForm(data={'kind': str(sub.pk), 'size': 'Small', 'n_items': 2}, category=category.slug)
+        form = MenuForm(data={'dish': str(sub.pk), 'size': 'Small', 'n_items': 2}, category=category.slug)
         form.instance.customer = request.user
         self.assertTrue(form.is_valid())
 
@@ -118,7 +118,7 @@ class OrdersViewsTest(TestCase):
         request = self.factory.get(reverse('additem', kwargs={'category' : category.slug}))
         request.user = user
         self.client.login(email='prova@prova.it', password='prova123')
-        response = self.client.post(reverse('additem', kwargs={'category' : category.slug}), {'kind': str(sub.pk), 'size': 'Small', 'n_items': 2, 'customer': request.user})
+        response = self.client.post(reverse('additem', kwargs={'category' : category.slug}), {'dish': str(sub.pk), 'size': 'Small', 'n_items': 2, 'customer': request.user})
         self.assertRedirects(response, reverse('menu'))   
 
     def test_order_list_view_loggin_no_permission(self):
@@ -205,11 +205,11 @@ class OrdersViewsTest(TestCase):
             'items-INITIAL_FORMS': '2',
             'items-TOTAL_FORMS': '2',
             'items-MAX_NUM_FORMS': '',
-            'items-0-kind': items[1].kind.pk,
+            'items-0-dish': items[1].dish.pk,
             'items-0-size': 'Small',
             'items-0-n_items': '1',
             'items-0-id': items[1].pk,
-            'items-1-kind': items[0].kind.pk,
+            'items-1-dish': items[0].dish.pk,
             'items-1-size': 'Large',
             'items-1-n_items': '2',
             'items-1-id': items[0].pk,
@@ -234,11 +234,11 @@ class OrdersViewsTest(TestCase):
             'items-INITIAL_FORMS': '2',
             'items-TOTAL_FORMS': '2',
             'items-MAX_NUM_FORMS': '',
-            'items-0-kind': items[1].kind.pk,
+            'items-0-dish': items[1].dish.pk,
             'items-0-size': 'Small',
             'items-0-n_items': '1',
             'items-0-id': items[1].pk,
-            'items-1-kind': items[0].kind.pk,
+            'items-1-dish': items[0].dish.pk,
             'items-1-size': 'Large',
             'items-1-n_items': '2',
             'items-1-id': items[0].pk,
@@ -258,12 +258,12 @@ class OrdersViewsTest(TestCase):
             'items-INITIAL_FORMS': '2',
             'items-TOTAL_FORMS': '2',
             'items-MAX_NUM_FORMS': '',
-            'items-0-kind': items[1].kind.pk,
+            'items-0-dish': items[1].dish.pk,
             'items-0-size': 'Small',
             'items-0-n_items': '1',
             'items-0-id': items[1].pk,
             'items-0-DELETE': True,
-            'items-1-kind': items[0].kind.pk,
+            'items-1-dish': items[0].dish.pk,
             'items-1-size': 'Large',
             'items-1-n_items': '2',
             'items-1-id': items[0].pk,

@@ -60,7 +60,7 @@ class Migration(migrations.Migration):
                 ('size', models.CharField(choices=[('Small', 'Small'), ('Large', 'Large')], default='Small', max_length=10)),
                 ('final_price', models.DecimalField(decimal_places=2, max_digits=6)),
                 ('customer', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
-                ('kind', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='orders.MenuItem')),
+                ('dish', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='orders.MenuItem')),
                 ('order', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='items', to='orders.Order')),
                 ('toppings', models.ManyToManyField(blank=True, to='orders.Topping')),
             ],

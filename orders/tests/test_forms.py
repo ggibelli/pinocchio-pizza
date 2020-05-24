@@ -40,7 +40,7 @@ class MenuFormTest(TestCase):
         tops3 = Topping.objects.create(name='cab')
         instance1 = MenuInstance.objects.create(
             customer = user,
-            kind = sub,
+            dish = sub,
             size = 'Large',
             n_items = 2,
         )
@@ -51,7 +51,7 @@ class MenuFormTest(TestCase):
         user = get_user_model().objects.get(username='prova')
         category = Category.objects.get(name='Subs')
         topping = Topping.objects.get(name='abc')
-        form = MenuForm(data={'kind': str(sub.pk), 'size': 'Small', 'toppings': [topping.pk], 'n_items': 2}, category=category.slug)
+        form = MenuForm(data={'dish': str(sub.pk), 'size': 'Small', 'toppings': [topping.pk], 'n_items': 2}, category=category.slug)
         form.instance.customer = user
         self.assertTrue(form.is_valid())
 
@@ -60,7 +60,7 @@ class MenuFormTest(TestCase):
         user = get_user_model().objects.get(username='prova')
         category = Category.objects.get(name='Pizza')
         topping = Topping.objects.get(name='bac')
-        form = MenuForm(data={'kind': str(pizza.pk), 'size': 'Small', 'toppings':[topping.pk], 'n_items': 2}, category=category.slug)
+        form = MenuForm(data={'dish': str(pizza.pk), 'size': 'Small', 'toppings':[topping.pk], 'n_items': 2}, category=category.slug)
         form.instance.customer = user
         self.assertTrue(form.is_valid())
 
@@ -68,7 +68,7 @@ class MenuFormTest(TestCase):
         salad = MenuItem.objects.get(name='ccc')
         user = get_user_model().objects.get(username='prova')
         category = Category.objects.get(name='Salad')
-        form = MenuForm(data={'kind': str(salad.pk), 'size': 'Small', 'n_items': 2}, category=category.slug)
+        form = MenuForm(data={'dish': str(salad.pk), 'size': 'Small', 'n_items': 2}, category=category.slug)
         form.instance.customer = user
         self.assertTrue(form.is_valid())
 
@@ -77,7 +77,7 @@ class MenuFormTest(TestCase):
         user = get_user_model().objects.get(username='prova')
         category = Category.objects.get(name='Subs')
         topping = Topping.objects.get(name='bac')
-        form = MenuForm(data={'kind': str(sub.pk), 'size': 'Small', 'toppings': [topping.pk], 'n_items': 2}, category=category.slug)
+        form = MenuForm(data={'dish': str(sub.pk), 'size': 'Small', 'toppings': [topping.pk], 'n_items': 2}, category=category.slug)
         form.instance.customer = user
         self.assertFalse(form.is_valid())
 
@@ -86,7 +86,7 @@ class MenuFormTest(TestCase):
         user = get_user_model().objects.get(username='prova')
         category = Category.objects.get(name='Pizza')
         topping = Topping.objects.get(name='bac')
-        form = MenuForm(data={'kind': str(pizza.pk), 'size': 'Small', 'toppings':[topping.pk], 'n_items': 2}, category=category.slug)
+        form = MenuForm(data={'dish': str(pizza.pk), 'size': 'Small', 'toppings':[topping.pk], 'n_items': 2}, category=category.slug)
         form.instance.customer = user
         self.assertFalse(form.is_valid())
 
@@ -94,18 +94,18 @@ class MenuFormTest(TestCase):
         salad = MenuItem.objects.get(name='ccc')
         user = get_user_model().objects.get(username='prova')
         category = Category.objects.get(name='Salad')
-        form = MenuForm(data={'kind': str(salad.pk), 'size': 'Small', 'n_items': -2}, category=category.slug)
+        form = MenuForm(data={'dish': str(salad.pk), 'size': 'Small', 'n_items': -2}, category=category.slug)
         form.instance.customer = user
         self.assertFalse(form.is_valid())
 
     def test_orderformset_valid(self, **kwargs):
-        kind = MenuItem.objects.get(name='bbb')
+        dish = MenuItem.objects.get(name='bbb')
         order = Order.objects.all()[0]
         formset = OrderFormset({
             'items-INITIAL_FORMS': '1',
             'items-TOTAL_FORMS': '1',
             'items-MAX_NUM_FORMS': '',
-            'items-0-kind': kind.pk,
+            'items-0-dish': dish.pk,
             'items-0-size': 'Small',
             'items-0-n_items': '2',
             'items-0-id': order.pk,
@@ -113,13 +113,13 @@ class MenuFormTest(TestCase):
         self.assertTrue(formset.is_valid())
 
     def test_orderformset_not_valid(self, **kwargs):
-        kind = MenuItem.objects.get(name='bbb')
+        dish = MenuItem.objects.get(name='bbb')
         order = Order.objects.all()[0]
         formset = OrderFormset({
             'items-INITIAL_FORMS': '1',
             'items-TOTAL_FORMS': '1',
             'items-MAX_NUM_FORMS': '',
-            'items-0-kind': kind.pk,
+            'items-0-dish': dish.pk,
             'items-0-size': 'Small',
             'items-0-n_items': '-2',
             'items-0-id': order.pk,

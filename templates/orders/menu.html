@@ -9,16 +9,18 @@
       <ul class="list-group">
         {% for category in categories %}
         {% load static %}
-        <a href="{% url 'additem' category.slug%}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+        <a href="{% url 'additem' category.slug%}" class="list-group-item menu list-group-item-action d-flex justify-content-between align-items-center">
           <div class="flex-column">
             {{category}}
-            {% for item in items %}
-            {% if item.category == category %}
-            <ul class="list-unstyled">
+            
+            <ul id="dish-list" class="list-unstyled">
+              {% for item in items %}
+              {% if item.category == category %}
               <li><small>{{item}}</small></li>
+              {% endif %}
+              {% endfor %}
             </ul>
-            {% endif %}
-            {% endfor %}
+            
             <span class="badge badge-info badge-pill"> {{category.dishes.count}} Dishes in menu</span>
             
           </div>
