@@ -14,7 +14,7 @@
       {% endfor %}
     </div>
   </div>
-  <div class="col">
+  <div class="col itemadd">
     <h1>{{category.name}}</h1>
     <form method="post">
     {% csrf_token %}
@@ -23,8 +23,8 @@
     </form>
     <hr>
     <p>
-      <label for="output">Price: </label>
-      <output name="result" id="final_price">Select your dish!</output>
+      <label class="prices" for="output">Price: </label>
+      <output class="prices" name="result" id="final_price">Select your dish!</output>
     </p>
   </div>
 </div>

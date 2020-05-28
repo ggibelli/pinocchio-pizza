@@ -4,37 +4,46 @@
 {% load crispy_forms_tags %}
 <h3>Order n. {{order.pk}}</h3>
 <h5>{{order.customer.first_name}} {{order.customer.last_name}}</h5>
-
-<table class="table table-sm">
-    <thead>
-      <tr>
-        <th scope="col">Dish</th>
-        <th scope="col">Category</th>
-        <th scope="col">Size</th>
-        <th scope="col">N. items</th>
-        <th scope="col">Price</th>
-      </tr>
-    </thead>
-    <tbody>
-        {% for item in order.items.all %}
-      <tr>
-        <th scope="row">{{item.dish}}</th>
-        <td>{{item.dish.category}}</td>
-        <td>{{item.size}}</td>
-        <td>{{item.n_items}}</td>
-        <td>{{item.price}}$</td>
-      </tr>
-      {% endfor %}
-
-    </tbody>
-  </table>
-<form method="post">
-    {% csrf_token %}
-    
-
-    {{ form|crispy }}
-    <button class="btn btn-success" type="submit">Save</button>
-    <a class='btn btn-danger'href="{% url 'order-delete' order.pk%}" >delete</a>
-
-</form>
+<div class="row">
+  <div class="col shopping-cart">
+    <table class="table table-sm">
+      <thead>
+        <tr>
+          <th scope="col">Dish</th>
+          <th scope="col">Category</th>
+          <th scope="col">Size</th>
+          <th scope="col">N. items</th>
+          <th scope="col">Price</th>
+        </tr>
+      </thead>
+      <tbody>
+          {% for item in order.items.all %}
+        <tr>
+          <th scope="row">{{item.dish}}</th>
+          <td>{{item.dish.category}}</td>
+          <td>{{item.size}}</td>
+          <td>{{item.n_items}}</td>
+          <td>{{item.price}}$</td>
+        </tr>
+        {% endfor %}
+  
+      </tbody>
+    </table>
+    <form id="order-edit" method="post">
+      {% csrf_token %}
+      {{ form|crispy }}
+      
+    </form>
+  </div>
+</div>
+<div class="row no-gutters">
+  <div class="col-auto">
+      <button class="btn btn-success" id="confirm-button" value="Confirm" form="order-edit" type="submit">Save</button>
+  </div>
+  <div class="col">
+      <form method="POST" onsubmit="return confirmDelete()" action="{% url 'order-delete' order.pk%}">
+          {% csrf_token %}<button class="btn btn-danger" type="submit"  value="Delete">Delete</button>
+       </form>
+  </div> 
+</div>
 {% endblock content %}

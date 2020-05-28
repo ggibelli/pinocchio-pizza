@@ -1,13 +1,51 @@
 /* static/css/base.css */
-h1 {
+
+
+body {
+  background: linear-gradient(to right, rgba(0, 146, 70, 0.9) calc(100% / 3), rgba(255, 255, 255, 0.9) calc(100% / 3), rgba(255, 255, 255, 0.9) calc(100% / 3 * 2), rgba(206, 43, 55, 0.9) calc(100% / 3 * 2));
+  color: white;
+  display: block;
+  position: relative;
+  margin: 0 auto;
+  z-index: 0;
+  min-height: 100vh;
+  font-family: "Comic Sans MS", cursive, sans-serif;
+}
+
+body::after {
+  background: url("/static/images/pizzaslice.png");
+  content: "";
+  opacity: 0.6;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  z-index: -1; 
+}
+
+h1, h2 {
   color: red;
+  
   }
-
-
 
 table { 
   empty-cells:show; 
   vertical-align: middle;
+  color: white !important;
+}
+
+.shopping-cart {
+  background-color: #0092475e;
+  opacity: 1;
+}
+
+.itemadd {
+  color: black;
+}
+
+select#id_dish, select#id_size, input#id_n_items {
+  width: 48%;
 }
 
 tr {
@@ -17,17 +55,12 @@ tr {
 th, td {
   overflow: hidden;
   vertical-align: middle !important;
-  height: 47px;
+  height: 81px;
 }
 
-.items {
-  width: 10rem;
+.prices {
+  color: black;
 }
-
-.size {
-  width: 10rem;
-}
-
 .menu {
   height: 310px;
 }
@@ -35,3 +68,29 @@ th, td {
 #dish-list li:nth-of-type(1n+10) {
   display: none;
 }
+
+
+@media (max-width: 576px) {
+  th.requiredField {
+    width: 58px;
+  }
+
+  td.form-group {
+    width: 58px;
+  }
+  select.size {
+    width: 78px;
+  }
+
+  input.items {
+    width: 48px;
+  }
+  .itemadd {
+    background-color: #0092475e;
+    color: white;
+  }
+  .prices {
+    color: white;
+  }
+}
+

@@ -16,8 +16,7 @@
     <div>
         {{ formset.management_form|crispy }}
     </div>
-
-    <table{% if form_id %} id="{{ form_id }}_table"{% endif%} class="table table-sm">
+    <table{% if form_id %} id="{{ form_id }}_table"{% endif%} class="table table-sm ">
         <thead>
             {% if formset.readonly and not formset.queryset.exists %}
             {% else %}
@@ -61,7 +60,6 @@
                 </tr>
         </tbody>
     </table>
-
     {% if inputs %}
         <div class="form-actions">
             {% for input in inputs %}

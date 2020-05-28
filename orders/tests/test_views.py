@@ -205,14 +205,14 @@ class OrdersViewsTest(TestCase):
             'items-INITIAL_FORMS': '2',
             'items-TOTAL_FORMS': '2',
             'items-MAX_NUM_FORMS': '',
-            'items-0-dish': items[1].dish.pk,
-            'items-0-size': 'Small',
-            'items-0-n_items': '1',
-            'items-0-id': items[1].pk,
-            'items-1-dish': items[0].dish.pk,
-            'items-1-size': 'Large',
-            'items-1-n_items': '2',
-            'items-1-id': items[0].pk,
+            'items-0-dish': items[0].dish.pk,
+            'items-0-size': items[0].size,
+            'items-0-n_items': items[0].n_items,
+            'items-0-id': items[0].pk,
+            'items-1-dish': items[1].dish.pk,
+            'items-1-size':  items[1].size,
+            'items-1-n_items': items[1].n_items,
+            'items-1-id': items[1].pk,
         })
         self.assertTrue(formset.is_valid())
         self.assertTemplateUsed(response, 'orders/shoppingcart.html')
@@ -234,14 +234,14 @@ class OrdersViewsTest(TestCase):
             'items-INITIAL_FORMS': '2',
             'items-TOTAL_FORMS': '2',
             'items-MAX_NUM_FORMS': '',
-            'items-0-dish': items[1].dish.pk,
-            'items-0-size': 'Small',
-            'items-0-n_items': '1',
-            'items-0-id': items[1].pk,
-            'items-1-dish': items[0].dish.pk,
-            'items-1-size': 'Large',
-            'items-1-n_items': '2',
-            'items-1-id': items[0].pk,
+            'items-0-dish': items[0].dish.pk,
+            'items-0-size': items[0].size,
+            'items-0-n_items': items[0].n_items,
+            'items-0-id': items[0].pk,
+            'items-1-dish': items[1].dish.pk,
+            'items-1-size':  items[1].size,
+            'items-1-n_items': items[1].n_items,
+            'items-1-id': items[1].pk,
         }
         response = self.client.post(reverse('cart', kwargs={'pk' : order.pk}), post_data)
         self.assertRedirects(response, reverse('confirm-cart', kwargs={'pk' : order.pk}))
@@ -273,6 +273,30 @@ class OrdersViewsTest(TestCase):
         response = self.client.post(reverse('cart', kwargs={'pk' : order.pk}), post_data)
         self.assertRedirects(response, reverse_lazy('menu'))
 
+    def test_cart_update_view_editing_item(self):
+        order = Order.objects.all()[0]
+        items = []
+        for item in MenuInstance.objects.all():
+            items.append(item)
+        self.client.login(email='prova@prova.it', password='prova123')
+        response = self.client.get(reverse('cart', kwargs={'pk' : order.pk}))
+        post_data = {
+            'is_confirmed': 'False',
+            'items-INITIAL_FORMS': '2',
+            'items-TOTAL_FORMS': '2',
+            'items-MAX_NUM_FORMS': '',
+            'items-0-dish': items[1].dish.pk,
+            'items-0-size': 'Small',
+            'items-0-n_items': '1',
+            'items-0-id': items[1].pk,
+            'items-1-dish': items[0].dish.pk,
+            'items-1-size': 'Large',
+            'items-1-n_items': '2',
+            'items-1-id': items[0].pk,
+        }
+        response = self.client.post(reverse('cart', kwargs={'pk' : order.pk}), post_data)
+        self.assertRedirects(response, reverse_lazy('confirm-cart',kwargs={'pk' : order.pk}))
+
     def test_confirm_order_view(self):
         order = Order.objects.all()[0]
         self.client.login(email='prova@prova.it', password='prova123')
@@ -290,11 +314,41 @@ class OrdersViewsTest(TestCase):
         self.response = self.client.get(reverse('confirm-cart', kwargs={'pk' : order.pk}))
         self.assertEqual(self.response.status_code, 404)
 
+    def test_delete_order_with_permission(self):
+        order = Order.objects.all()[0]
+        self.client.login(email='prova@prova.it', password='prova123')
+        self.user.user_permissions.add(self.special_permission)
+        self.response = self.client.post(reverse('order-delete', kwargs={'pk' : order.pk}))
+        self.assertEqual(self.response.status_code, 302)
+        self.assertRedirects(self.response, reverse_lazy('order-list'))
 
-    def test_charge_stripe(self):
+    def test_delete_order_without_permission(self):
+        order = Order.objects.all()[0]
+        self.client.login(email='prova@prova.it', password='prova123')
+        self.response = self.client.post(reverse('order-delete', kwargs={'pk' : order.pk}))
+        self.assertEqual(self.response.status_code, 302)
+        self.assertRedirects(self.response, reverse_lazy('menu'))
+
+    def test_delete_order_logged_out(self):
+        order = Order.objects.all()[0]
+        self.response = self.client.post(reverse('order-delete', kwargs={'pk' : order.pk}))
+        self.assertEqual(self.response.status_code, 302)
+        self.assertTrue(self.response.url.startswith('/accounts/login/'))
+
+
+
+    '''def test_charge_stripe(self):
         order = Order.objects.all()[0]
         self.client.login(email='prova@prova.it', password='prova123')
         response = self.client.post(reverse('charge'), {'order-amount': order.final_price * 100, 'order-id': order.pk})
         self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse('post_payment', kwargs={'pk' : order.pk}))
+
+    def test_post_payment(self):
+        order = Order.objects.all()[0]
+        self.client.login(email='prova@prova.it', password='prova123')
+        response = self.client.get(reverse('post_payment', kwargs={'pk' : order.pk}))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(self.response, 'orders/charge.html')'''
 
     

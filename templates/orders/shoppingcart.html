@@ -3,63 +3,47 @@
 {% block content %}
 {% load crispy_forms_tags %}
 <h1>Shopping cart</h1>
-<div class="row no-gutters align-items-bottom">
-    <div class="col-auto my-top" style="margin-top: 16px;">
+<div class="row no-gutters align-items-bottom shopping-cart">
+    <div class="col-md-5 col-5 my-top " style="margin-top: 16px;">
         <table class="table table-sm">
             <thead>
                 <tr>
                     <th>Dish</th>
-                </tr>
-
-            </thead>
-            <tbody>
-                {% for item in order.items.all %}
-                <tr>
-                    <td class="align-middle dish">{{item.category}}-{{item.dish}}</td>
-                </tr>
-                {% endfor %}
-                <tr>
-                    <td class="align-middle">Final price</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-    <div class="col-auto order-1 my-top">
-        <form method="post">
-            {% csrf_token %}
-            
-
-            {% crispy item helper %}
-            {{ form|crispy }}
-            
-            <button class="btn btn-success" value="Save" type="submit">Save</button>
-            <a class='btn btn-danger'href="{% url 'order-delete' order.pk%}" >Delete</a>
-            
-        </form>
-        
-    </div>
-    <div class="col-auto order-12" style="margin-top: 16px;">
-        <table class="table table-sm">
-            <thead>
-                <tr>
                     <th>Price</th>
                 </tr>
             </thead>
             <tbody>
                 {% for item in order.items.all %}
                 <tr>
+                    <td class="align-middle dish">{{item.category}}-{{item.dish}}</td>
                     <td class="align-middle price" id="{{item.pk}}">{{item.price}}$</td>
                 </tr>
                 {% endfor %}
                 <tr>
+                    <td class="align-middle">Final price</td>
                     <td id="total-price">{{order.final_price}}$</td>
                 </tr>
             </tbody>
         </table>
+        
     </div>
-        
-        
-       
+    <div class="col-md-7 col-7 order-1 my-top ">
+        <form method="post" id="shop-cart">
+            {% csrf_token %}
+            {% crispy item helper %}
+            {{ form|crispy }}
+        </form>  
+    </div>   
+</div>
+<div class="row no-gutters">
+    <div class="col-auto">
+        <button class="btn btn-success" id="confirm-button" value="Confirm" form="shop-cart" type="submit">Checkout</button>
+    </div>
+    <div class="col">
+        <form method="POST" onsubmit="return confirmDelete()" action="{% url 'order-delete' order.pk%}">
+            {% csrf_token %}<button class="btn btn-danger" type="submit"  value="Delete">Delete</button>
+         </form>
+    </div> 
 </div>
 
 <script>
@@ -83,41 +67,70 @@
   }
   document.addEventListener('DOMContentLoaded', () => { 
     const selectors = document.querySelectorAll('select');
-    const inputs = document.querySelectorAll('input[type="number"')
+    const inputs = document.querySelectorAll('input[type="number"');
+    const checkboxes = document.querySelectorAll('input[type="checkbox"');
+    let checkValues = []
+    let cartModified;
+    
+    checkboxes.forEach(element => {
+        checkValues.push({'id': element.id, 'value': false})
+        element.addEventListener('change', () => {
+            for (let check of checkValues){
+                if(event.target.checked && event.target.id == check.id){
+                    check.value = true;
+                }
+                else if (!event.target.checked && event.target.id == check.id){
+                    check.value = false;
+                }
+            }
+            cartModified = checkValues.some(element => element.value == true);
+            if (cartModified){
+                document.getElementById('confirm-button').innerHTML = 'Update';
+            }
+            else{
+                document.getElementById('confirm-button').innerHTML = 'Checkout';
+            }
+        })
+        
+    })
+    
     updateItem(inputs);
     updateItem(selectors);
     items.filter(item => {
         if (item.itemCategory == 'Salad' || item.itemCategory == 'Pasta'){
-            document.getElementById(item.idCSS + '-size').style.visibility = 'hidden'
+            document.getElementById(item.idCSS + '-size').style.visibility = 'hidden';
         }
     })
 })
-    
+
+function updateButtonHTML() {
+    document.getElementById('confirm-button').innerHTML = 'Update'
+}
+
 function updateItem(arrayDOM){
     for (let itemDOM of arrayDOM) {
         itemDOM.addEventListener('change', () => {
-            let itemIDregex = itemDOM.id.match(/id.+\d+/)[0]
+            orderModified = true
+            let itemIDregex = itemDOM.id.match(/id.+\d+/)[0];
             items.filter(item => {
                 if(item.idCSS == itemIDregex){
                     if (isNaN(itemDOM.value)){
                         item.itemSize = itemDOM.value;
                     }
                     else {
-                        item.nItems = itemDOM.value
+                        item.nItems = itemDOM.value;
                     }
                     document.getElementById(item.itemID).innerHTML = item.price.toFixed(2) + '$';
                     let prices = [];
                     document.querySelectorAll('.price').forEach(element => {
-                        prices.push(parseFloat(element.innerHTML))
+                        prices.push(parseFloat(element.innerHTML));
                     });
-                    let final_price = prices.reduce((a, b) => a + b)
+                    let final_price = prices.reduce((a, b) => a + b);
                     document.getElementById('total-price').innerHTML = final_price.toFixed(2) + '$';
                 }
             })
-            
         })
-    }
-    
+    }   
 }
 
 

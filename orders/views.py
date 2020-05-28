@@ -76,9 +76,15 @@ class CartUpdateView(LoginRequiredMixin, UpdateView):
     model = Order
     form_class = CartForm
     template_name = 'orders/shoppingcart.html'
+    def __init__(self, *args, **kwargs):
+        self.items = 0
+        super(CartUpdateView, self).__init__(*args, **kwargs)
+    # get only the order that is not confirmed
     def get_object(self):
         try:
-            return Order.objects.get(customer=self.request.user.pk, is_confirmed=False)
+            cart = Order.objects.get(customer=self.request.user.pk, is_confirmed=False)
+            self.items = cart.items.count()
+            return cart
         except Order.DoesNotExist:
             raise Http404("Order does not exist")
     def get_context_data(self, **kwargs):
@@ -98,16 +104,23 @@ class CartUpdateView(LoginRequiredMixin, UpdateView):
             item.instance = self.object
             item.save()
         return super().form_valid(form)
-        
+    # if updating the cart the customer deleted all the items go back to the menu and delete the order
     def get_success_url(self):
+        order = Order.objects.get(id=self.object.id)
         if self.object.items.count() == 0:
-            Order.objects.get(id=self.object.id).delete()
+            order.delete()
             return reverse_lazy('menu')
+        elif self.object.items.count() < self.items:
+            return reverse_lazy('cart',kwargs={'pk' : self.object.pk})
         return reverse_lazy('confirm-cart', kwargs={'pk' : self.object.pk})
 
 class OrderDeleteView(LoginRequiredMixin, DeleteView):
     model = Order
-    success_url = reverse_lazy('order-list')
+    def get_success_url(self):
+        user = self.object.customer
+        if user.has_perm('orders.special_status'):
+            return reverse_lazy('order-list')
+        return reverse_lazy('menu')
 
 class ConfirmOrderView(LoginRequiredMixin, DetailView):
     model = Order
@@ -159,6 +172,7 @@ def charge(request):
             messages.error(request, 'Email server down')
         except Exception as e:
             messages.error(request, "Server error, the webmaster's been notified")
+            
         return redirect('post_payment', cart_id = order.id)
 
 def post_payment(request, cart_id):
@@ -172,6 +186,9 @@ def post_payment(request, cart_id):
             context['cart_id'] = cart_id
 
     return render(request, template, context)
+
+
+
 
 
 

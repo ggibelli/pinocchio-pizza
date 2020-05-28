@@ -94,6 +94,8 @@ class Order(models.Model):
     def is_valid_price(self):
         return self.final_price > 0 
 
+    
+
     def __str__(self):
         return f'{self.id} ({self.time_created})'
 
@@ -108,6 +110,10 @@ class MenuInstance(models.Model):
         default=SM,
     )
     order = models.ForeignKey(Order, null=True, on_delete=models.CASCADE, related_name='items')
+    time_created = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+
+    class Meta:
+        ordering = ['time_created']
 
     @property
     def category(self):
@@ -126,7 +132,9 @@ class MenuInstance(models.Model):
         return decimal.Decimal(price)
 
     def is_valid_price(self):
-        return self.price > 0   
+        return self.price > 0  
+        
+         
 
     def __str__(self):
         return f'{self.dish}'
