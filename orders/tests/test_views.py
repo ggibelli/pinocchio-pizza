@@ -246,7 +246,7 @@ class OrdersViewsTest(TestCase):
         response = self.client.post(reverse('cart', kwargs={'pk' : order.pk}), post_data)
         self.assertRedirects(response, reverse('confirm-cart', kwargs={'pk' : order.pk}))
 
-    def test_cart_update_view_deleting_item(self):
+    def test_cart_update_view_deleting_items(self):
         order = Order.objects.all()[0]
         items = []
         for item in MenuInstance.objects.all():
@@ -296,6 +296,33 @@ class OrdersViewsTest(TestCase):
         }
         response = self.client.post(reverse('cart', kwargs={'pk' : order.pk}), post_data)
         self.assertRedirects(response, reverse_lazy('confirm-cart',kwargs={'pk' : order.pk}))
+
+    def test_cart_update_view_deleting_one_item(self):
+        order = Order.objects.all()[0]
+        items = []
+        for item in MenuInstance.objects.all():
+            items.append(item)
+        self.client.login(email='prova@prova.it', password='prova123')
+        response = self.client.get(reverse('cart', kwargs={'pk' : order.pk}))
+        post_data = {
+            'is_confirmed': 'False',
+            'items-INITIAL_FORMS': '2',
+            'items-TOTAL_FORMS': '2',
+            'items-MAX_NUM_FORMS': '',
+            'items-0-dish': items[1].dish.pk,
+            'items-0-size': 'Small',
+            'items-0-n_items': '1',
+            'items-0-id': items[1].pk,
+            'items-0-DELETE': True,
+            'items-1-dish': items[0].dish.pk,
+            'items-1-size': 'Large',
+            'items-1-n_items': '2',
+            'items-1-id': items[0].pk,
+            'items-1-DELETE': False,
+        }
+        
+        response = self.client.post(reverse('cart', kwargs={'pk' : order.pk}), post_data)
+        self.assertRedirects(response, reverse_lazy('cart',kwargs={'pk' : order.pk}))
 
     def test_confirm_order_view(self):
         order = Order.objects.all()[0]

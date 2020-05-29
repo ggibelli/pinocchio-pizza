@@ -18,5 +18,7 @@ deploy:
   api_key: $HEROKU_API_KEY
   strategy: git
   app: cs50web-project3-pizza
-  run: python manage.py makemigrations && python manage.py migrate
+  run: 
+    - python manage.py makemigrations && python manage.py migrate
+    - python manage.py collectstatic
   on: master
