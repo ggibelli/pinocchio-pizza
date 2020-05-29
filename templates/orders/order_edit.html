@@ -19,8 +19,8 @@
       <tbody>
           {% for item in order.items.all %}
         <tr>
-          <th scope="row">{{item.dish}}</th>
-          <td>{{item.dish.category}}</td>
+          <th scope="row">{{item.kind}}</th>
+          <td>{{item.kind.category}}</td>
           <td>{{item.size}}</td>
           <td>{{item.n_items}}</td>
           <td>{{item.price}}$</td>

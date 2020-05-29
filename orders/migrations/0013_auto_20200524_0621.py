@@ -12,7 +12,7 @@ class Migration(migrations.Migration):
     operations = [
         migrations.RenameField(
             model_name='menuinstance',
-            old_name='dish',
-            new_name='dish',
+            old_name='kind',
+            new_name='kind',
         ),
     ]

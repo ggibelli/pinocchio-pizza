@@ -1,5 +1,9 @@
 /* static/css/base.css */
 
+.container-fluid {
+  background: linear-gradient(to right, rgba(0, 146, 70, 0.9) calc(100% / 3), rgba(255, 255, 255, 0.9) calc(100% / 3), rgba(255, 255, 255, 0.9) calc(100% / 3 * 2), rgba(206, 43, 55, 0.9) calc(100% / 3 * 2)) !important;
+
+}
 
 body {
   background: linear-gradient(to right, rgba(0, 146, 70, 0.9) calc(100% / 3), rgba(255, 255, 255, 0.9) calc(100% / 3), rgba(255, 255, 255, 0.9) calc(100% / 3 * 2), rgba(206, 43, 55, 0.9) calc(100% / 3 * 2));
@@ -15,7 +19,7 @@ body {
 body::after {
   background: url("/static/images/pizzaslice.png");
   content: "";
-  opacity: 0.6;
+  opacity: 1;
   position: absolute;
   top: 0;
   bottom: 0;
@@ -44,7 +48,7 @@ table {
   color: black;
 }
 
-select#id_dish, select#id_size, input#id_n_items {
+select#id_kind, select#id_size, input#id_n_items {
   width: 48%;
 }
 
@@ -65,7 +69,7 @@ th, td {
   height: 310px;
 }
 
-#dish-list li:nth-of-type(1n+10) {
+#kind-list li:nth-of-type(1n+10) {
   display: none;
 }
 

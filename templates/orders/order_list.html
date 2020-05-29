@@ -19,7 +19,7 @@
       <tbody>
           {% for order in orders %}
         <tr style="transform: rotate(0);">
-          <th scope="row"><a href="{{ order.get_absolute_url }}" class="stretched-link">{{order.id}}</a></th>
+          <th scope="row"><a href="{{ order.get_absolute_url }}" class="stretched-link" style="color: white;">{{order.id}}</a></th>
           <td>{{order.time_created}}</td>
           <td>{{order.time_updated}}</td>
           <td>{{order.customer.first_name }} {{order.customer.last_name}}</td>

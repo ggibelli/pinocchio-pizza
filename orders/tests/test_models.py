@@ -48,14 +48,14 @@ class OrdersModelsTest(TestCase):
         tops3 = Topping.objects.create(name='cab')
         pizza = MenuInstance.objects.create(
             customer = user,
-            dish = item_pizza,
+            kind = item_pizza,
             size = 'Small',
             n_items = 1,
         )
         pizza.toppings.add(tops1, tops2)
         sub = MenuInstance.objects.create(
             customer = user,
-            dish = item_sub,
+            kind = item_sub,
             size = 'Large',
             n_items = 2,
         )
@@ -85,9 +85,9 @@ class OrdersModelsTest(TestCase):
         self.assertEqual(str(topping), topping.name)
 
     def test_is_valid_str_menuinstance(self):
-        dish = MenuItem.objects.get(name='pizza')
-        pizza = MenuInstance.objects.get(dish=dish)
-        self.assertEqual(str(pizza), pizza.dish.name)
+        kind = MenuItem.objects.get(name='pizza')
+        pizza = MenuInstance.objects.get(kind=kind)
+        self.assertEqual(str(pizza), pizza.kind.name)
 
     def test_is_valid_str_order(self):
         order = Order.objects.all()[0]
@@ -98,8 +98,8 @@ class OrdersModelsTest(TestCase):
         self.assertTrue(pizza.is_valid_price())
 
     def test_pizza_ntoppings(self):
-        dish = MenuItem.objects.get(name='pizza')
-        pizza = MenuInstance.objects.get(dish=dish)
+        kind = MenuItem.objects.get(name='pizza')
+        pizza = MenuInstance.objects.get(kind=kind)
         self.assertEqual(pizza.toppings.count(), 2)
 
     def test_order_cart_state(self):
@@ -137,11 +137,11 @@ class OrdersModelsTest(TestCase):
         self.assertEqual(order.items.count(), 1)
 
     def test_category_property(self):
-        dish = MenuItem.objects.get(name='sub')
+        kind = MenuItem.objects.get(name='sub')
         category = Category.objects.get(name='Subs')
-        sub = MenuInstance.objects.get(dish=dish)
+        sub = MenuInstance.objects.get(kind=kind)
         self.assertEqual(sub.category, category.name)
-        self.assertEqual(dish.category, category)
+        self.assertEqual(kind.category, category)
 
     def test_category_count_dishes(self):
         category = Category.objects.get(name='Salad')
