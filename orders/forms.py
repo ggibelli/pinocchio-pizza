@@ -14,13 +14,15 @@ class MenuForm(forms.ModelForm):
     class Meta:
         model = MenuInstance
         fields = ['kind', 'size', 'toppings', 'n_items']
-        kind = forms.ModelChoiceField(queryset=MenuItem.objects.none())
+        kind = forms.ModelChoiceField(queryset=MenuItem.objects.none(), label='poppo')
+        
     # get the category from the url and query only the item in that category (kwargs.pop)    
     def __init__(self, *args, **kwargs):
         category = kwargs.pop('category')
         category_id = Category.objects.get(slug=category)
         super(MenuForm, self).__init__(*args, **kwargs)
         self.fields['kind'].queryset = MenuItem.objects.filter(category=category_id)
+        self.fields['kind'].label = category_id.name
         self.fields['toppings'].widget = CheckboxSelectMultiple()
         if category == 'pasta' or category == 'salad' or category == 'dinner-platters':
             self.fields['toppings'].widget = forms.HiddenInput()

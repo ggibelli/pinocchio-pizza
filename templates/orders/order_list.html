@@ -3,8 +3,8 @@
 {% block content %}
 <h1>Orders</h1>
 <div class="row">
-  <div class="col shopping-cart">
-    <table class="table table-hover">
+  <div class="col shopping-cart order-list">
+    <table class="table table-sm">
       <thead>
         <tr>
           <th scope="col">ID Order</th>
@@ -17,7 +17,7 @@
         </tr>
       </thead>
       <tbody>
-          {% for order in orders %}
+        {% for order in orders %}
         <tr style="transform: rotate(0);">
           <th scope="row"><a href="{{ order.get_absolute_url }}" class="stretched-link" style="color: white;">{{order.id}}</a></th>
           <td>{{order.time_created}}</td>

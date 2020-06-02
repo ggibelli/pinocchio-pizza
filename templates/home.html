@@ -8,9 +8,9 @@
   Hi {{ user.email }}!
   <p><a href="{% url 'account_logout' %}">Log Out</a></p>
 {% else %}
-  <p>You are not logged in</p>
-  <a class="btn btn-outline-light" href="{% url 'account_login' %}">Log In</a>
-  <a class="btn btn-outline-light" href="{% url 'account_signup' %}">Sign Up</a>
+  <p>You are not logged in, check out our <a href="{% url 'menu' %}">menu</a> or <a class="btn btn-outline-light" href="{% url 'account_login' %}">Log In</a>
+    <a class="btn btn-outline-light" href="{% url 'account_signup' %}">Sign Up</a> to order online!</p>
+
 {% endif %}
 </div>
 {% endblock content %}

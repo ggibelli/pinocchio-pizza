@@ -1,8 +1,9 @@
-from .models import Order
+from .models import Order, Category
 
 def cart(request):
     cart = False
     try:
+        categories = Category.objects.all()
         order = Order.objects.get(customer=request.user.pk, is_confirmed=False)
         n_items = order.items.count()
         cart = True
@@ -10,5 +11,7 @@ def cart(request):
         cart = False 
         n_items = 0
         order = None
-    return {'cart': n_items, 'order': order}
+    except Category.DoesNotExist:
+        categories = None
+    return {'cart': n_items, 'order': order, 'categories': categories}
         

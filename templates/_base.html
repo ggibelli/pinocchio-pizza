@@ -12,50 +12,67 @@
   <link rel="stylesheet" href="{% static 'css/base.css' %}">
 </head>
 <body>
-  <header>
-      <nav class="navbar sticky-top navbar-expand-lg navbar-dark " style="background-color: linear-gradient(to right, #009246 calc(100% / 3), white calc(100% / 3), white calc(100% / 3 * 2), #CE2B37 calc(100% / 3 * 2));">
+  <header class="sticky-top">
+      <nav class="navbar navbar-expand-lg navbar-dark ">
         <a class="navbar-brand" href="{% url 'home' %}">
-          <img src="{% static 'images/logo.png' %}" width="150" height="72" alt="">
+          <img src="{% static 'images/newlogo.png' %}"  height="72" alt="">
         </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNavDropdown">
           <ul class="navbar-nav ml-auto">
-            <li class="nav-item active">
-              <a class="nav-link" href="{% url 'menu' %}">Menu</a>
+            {% if not user.is_authenticated %}
+            <li class="nav-item p-1">
+              <a class="btn btn-warning" href="{% url 'menu' %}">Menu</a>
             </li>
-            {% if user.is_authenticated %}
-          <li class="nav-item active dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Profile
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <a class="dropdown-item" href="{% url 'profile' user.slug%}">My orders</a>
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item" href="{% url 'account_logout' %}">Log Out</a>
-            </div>
-          </li>
-          
-          {% if cart %}
-          <li class="nav-item active">
-            <a class="nav-link" href="{% url 'cart' order.pk %}">Cart<span class="badge badge-pill badge-info">{{cart}}</span></a>
-          </li>
-          {% endif %}
-          {% if perms.orders.special_status %}
-          <li class="nav-item active">
-            <a class="nav-link" href="{% url 'order-list' %}">Orders</a>
             {% endif %}
+            {% if user.is_authenticated %}
+            <li class="nav-item p-1 dropdown">
+              <a class="btn btn-warning dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Menu
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                {% for category in categories %}
+                <a class="dropdown-item {% if category.slug in request.path%} active
+                {% endif %}" href="{% url 'additem' category.slug%}">{{category}}</a>
+                <div class="dropdown-divider"></div>
+                {%empty%}
+                <a class="dropdown-item" href="#">No items yet!</a>
+                <div class="dropdown-divider"></div>
+                {% endfor %}
+              </div>
+            </li>
+            <li class="nav-item p-1 dropdown">
+              <a class="btn btn-warning dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Profile
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <a class="dropdown-item" href="{% url 'profile' user.slug%}">My orders</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="{% url 'account_logout' %}">Log Out</a>
+              </div>
+            </li>
+            
+            {% if cart %}
+            <li class="nav-item p-1">
+              <a class="btn btn-warning" href="{% url 'cart' order.pk %}">Cart <span class="badge badge-pill badge-info">{{cart}}</span></a>
+            </li>
+            {% endif %}
+            {% if perms.orders.special_status %}
+            <li class="nav-item p-1">
+              <a class="btn btn-warning" href="{% url 'order-list' %}">Orders</a>
+              {% endif %}
 
-          </li>
-          {% else %}
-          <li class="nav-item active">
-            <a class="nav-link" href="{% url 'account_login' %}">Log In</a>
-          </li>
-          <li class="nav-item active">
-            <a class="btn btn-outline-light" href="{% url 'account_signup' %}">Sign Up</a>
-        
-          </li>
+            </li>
+            {% else %}
+            <li class="nav-item p-1">
+              <a class="btn btn-warning" href="{% url 'account_login' %}">Log In</a>
+            </li>
+            <li class="nav-item p-1">
+              <a class="btn btn-warning" href="{% url 'account_signup' %}">Sign Up</a>
+          
+            </li>
           {% endif %}
           </ul>
         </div>
@@ -65,6 +82,14 @@
     {% block content %}
     {% endblock content %}
   </div>
+  <footer class="sticky-footer py-4  text-white-50">
+    <div class="container text-center">
+        <small>Pinocchio's Pizza & Subs</small><br>
+        <small>74 Winthrop Street</small><br>
+          <small>Harvard Square</small><br>
+          <small>617-876-4897</small>
+    </div>
+    </footer>
   <!-- Optional JavaScript -->
   <!-- jQuery first, then Popper.js, then Bootstrap JS -->
   <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>

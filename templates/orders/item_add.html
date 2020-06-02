@@ -5,17 +5,19 @@
 
 
 <div class="row">
-  <div class="col-4">
+  <div class="col-md-3" id="navmenu">
     <div class="list-group">
       {% for category in categories %}
-      <a href="{% url 'additem' category.slug %}" class="list-group-item list-group-item-action">{{category}}</a>
+      <a href="{% url 'additem' category.slug %}" class="list-group-item list-group-item-action {% if category.slug in request.path%}active
+      {% endif %}">{{category}} </a>
+      
       {% empty %}
       <a href="#" class="list-group-item list-group-item-action">No items</a>
+      
       {% endfor %}
     </div>
   </div>
-  <div class="col itemadd">
-    <h1>{{category.name}}</h1>
+  <div class="col-md-6 itemadd">
     <form method="post">
     {% csrf_token %}
     {{ form|crispy }}
@@ -37,6 +39,7 @@
   document.addEventListener('DOMContentLoaded', () => { 
     const itemdish = document.getElementById('id_kind');
     const itemSize = document.getElementById('id_size');
+    const toppings = document.getElementById('div_id_toppings');
     let itemPrice;
     let isSub = false;
     const form = document.querySelector('form');
@@ -48,8 +51,12 @@
       isSub = true;
       checks = document.querySelectorAll(".form-check-label");
     }
-    if (document.getElementById('div_id_toppings')) {
-        document.getElementById('div_id_toppings').readOnly = true;
+    document.querySelectorAll('.form-check').forEach(element => {
+      element.classList.add('form-check-inline')
+    })
+    if (toppings) {
+      toppings.readOnly = true;
+      toppings.style.display = 'none'
     }
     let max = 0;
     let currentItem
@@ -73,7 +80,15 @@
         
       }
       showPriceDOM();
+      if (currentItem.includes('topping') || currentItem.includes('Special') || category == 'Subs'){
+        toppings.style.display = 'initial';
+      }
+      else if (currentItem == 'Cheese' || currentItem == '---------'){
+        toppings.style.display = 'none';
+      }
       if (!isSub){
+        
+
         if (currentItem == 'One topping'){
           max = 1;
           cleanChecks();

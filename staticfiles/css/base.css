@@ -1,12 +1,12 @@
 /* static/css/base.css */
 
-.container-fluid {
-  background: linear-gradient(to right, rgba(0, 146, 70, 0.9) calc(100% / 3), rgba(255, 255, 255, 0.9) calc(100% / 3), rgba(255, 255, 255, 0.9) calc(100% / 3 * 2), rgba(206, 43, 55, 0.9) calc(100% / 3 * 2)) !important;
-
-}
 
 body {
-  background: linear-gradient(to right, rgba(0, 146, 70, 0.9) calc(100% / 3), rgba(255, 255, 255, 0.9) calc(100% / 3), rgba(255, 255, 255, 0.9) calc(100% / 3 * 2), rgba(206, 43, 55, 0.9) calc(100% / 3 * 2));
+  background-image: url("/static/images/background.png");
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
+  background-color: linear-gradient(to right, rgba(0, 146, 70, 0.9) calc(100% / 4 ), rgba(255, 255, 255, 0.9) calc(100% / 4), rgba(255, 255, 255, 0.9) calc(75%), rgba(206, 43, 55, 0.9) calc(100% / 4));
   color: white;
   display: block;
   position: relative;
@@ -16,40 +16,41 @@ body {
   font-family: "Comic Sans MS", cursive, sans-serif;
 }
 
-body::after {
-  background: url("/static/images/pizzaslice.png");
-  content: "";
-  opacity: 1;
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  right: 0;
-  left: 0;
-  z-index: -1; 
+.navbar {
+  background-image: url("/static/images/backgroundnavbar.png");
+  background-color: linear-gradient(to right, rgba(0, 146, 70, 0.9) calc(100% / 4 ), rgba(255, 255, 255, 0.9) calc(100% / 4), rgba(255, 255, 255, 0.9) calc(75%), rgba(206, 43, 55, 0.9) calc(100% / 4));
+}
+
+.row {
+  padding-top: 20px;
+}
+
+.dropdown-item:hover, .list-group-item-action:hover {
+  background: #5cb85c;
+  color: white;
+}
+
+.dropdown-item.active, .list-group-item-action.active{
+  background: #5cb85c;
+  border-style: none;
 }
 
 h1, h2 {
-  color: red;
-  
-  }
+  color: #f0ad4e;
+}
 
 table { 
   empty-cells:show; 
   vertical-align: middle;
-  color: white !important;
+  color: wheat !important;
 }
 
 .shopping-cart {
-  background-color: #0092475e;
   opacity: 1;
 }
 
 .itemadd {
-  color: black;
-}
-
-select#id_kind, select#id_size, input#id_n_items {
-  width: 48%;
+  color: wheat;
 }
 
 tr {
@@ -63,16 +64,23 @@ th, td {
 }
 
 .prices {
-  color: black;
+  color: wheat;
 }
+
 .menu {
   height: 310px;
+  background-color: rgba(255, 255, 255, 0);
+  opacity: 0.8;
+  color: wheat;
+}
+
+.menu:hover {
+  background: #f0ac4e6b;
 }
 
 #kind-list li:nth-of-type(1n+10) {
   display: none;
 }
-
 
 @media (max-width: 576px) {
   th.requiredField {
@@ -89,12 +97,22 @@ th, td {
   input.items {
     width: 48px;
   }
+
   .itemadd {
-    background-color: #0092475e;
-    color: white;
+    color: wheat;
   }
+
   .prices {
-    color: white;
+    color: wheat;
+  }
+  
+  #navmenu {
+    display: none;
+  }
+
+  .order-list {
+    font-size: small;
   }
 }
+
 
