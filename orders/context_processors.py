@@ -1,7 +1,6 @@
 from .models import Order, Category
 
 def cart(request):
-    cart = False
     try:
         categories = Category.objects.all()
         order = Order.objects.get(customer=request.user.pk, is_confirmed=False)

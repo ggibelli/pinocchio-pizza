@@ -85,7 +85,7 @@ class CustomerDetailViewTests(TestCase):
         self.assertEqual(self.response.status_code, 200)
         self.assertEqual(self.response.context['orders'].count(), 1)
         self.assertTemplateUsed(self.response, 'account/customer_detail.html')
-        self.assertContains(self.response, 'Your homepage')
+        self.assertContains(self.response, 'My orders')
         self.assertNotContains(self.response, 'Pippopooppo')
 
     def test_customer_detail_template_loggedout(self):
