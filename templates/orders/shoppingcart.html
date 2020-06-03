@@ -5,7 +5,7 @@
 <h1>Shopping cart</h1>
 <div class="row no-gutters align-items-bottom shopping-cart">
     <div class="col-md-5 col-5 my-top " style="margin-top: 16px;">
-        <table class="table table-sm">
+        <table class="table table-sm" style="font-size: small;">
             <thead>
                 <tr>
                     <th>Dish</th>
@@ -15,7 +15,7 @@
             <tbody>
                 {% for item in order.items.all %}
                 <tr>
-                    <td class="align-middle kind">{{item.category}}-{{item.kind}}</td>
+                    <td class="align-middle dish" style="font-size: smaller;">{{item.category}}-{{item.dish}}</td>
                     <td class="align-middle price" id="{{item.pk}}">{{item.price}}$</td>
                 </tr>
                 {% endfor %}
@@ -50,7 +50,7 @@
   const items = [];
   {% for item in order.items.all %}
   items.push({idCSS:'id_items-0', itemID:'{{item.id}}', itemCategory:'{{item.category}}', 
-    itemPrice:'{{item.kind.price}}', itemPriceLarge:'{{item.kind.price_large}}', itemSize:'{{item.size}}', 
+    itemPrice:'{{item.dish.price}}', itemPriceLarge:'{{item.dish.price_large}}', itemSize:'{{item.size}}', 
     nItems:'{{item.n_items}}', get price(){
         if (this.itemSize == 'Large') {
             return this.itemPriceLarge * this.nItems;

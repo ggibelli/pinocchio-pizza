@@ -26,7 +26,7 @@
     <hr>
     <p>
       <label class="prices" for="output">Price: </label>
-      <output class="prices" name="result" id="final_price">Select your dish!</output>
+      <output class="prices" name="result" id="final_price">Select your {{category.name}}!</output>
     </p>
   </div>
 </div>
@@ -37,7 +37,7 @@
   items.push({name:'{{item.name}}', price:'{{item.price}}', price_large:'{{item.price_large}}'});
   {% endfor %}
   document.addEventListener('DOMContentLoaded', () => { 
-    const itemdish = document.getElementById('id_kind');
+    const itemdish = document.getElementById('id_dish');
     const itemSize = document.getElementById('id_size');
     const toppings = document.getElementById('div_id_toppings');
     let itemPrice;

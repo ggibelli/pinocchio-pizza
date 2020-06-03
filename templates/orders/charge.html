@@ -2,7 +2,7 @@
 {% block title %}Charge{% endblock title %}
 {% block content %}
 {% if error %}
-  <div class="jumbotron">
+  <div class="jumbotron" style="background-color: rgba(255, 0, 0, 0.5);">
     <h1 class="display-4">Payment not successfull :(</h1>
     <p class="lead">Something went wrong</p>
     <hr class="my-4">
@@ -11,7 +11,7 @@
   </div>
 
 {% else %}
-  <div class="jumbotron">
+  <div class="jumbotron" style="background-color: rgba(0, 255, 0, 0.5);">
     <h1 class="display-4">Payment successfull</h1>
     <p class="lead">Thanks for your order!</p>
     <hr class="my-4">

@@ -145,7 +145,7 @@ def charge(request):
             charge = stripe.Charge.create(
                 amount=amount,
                 currency='usd', 
-                description='Pizzeria kind', 
+                description='Pizzeria dish', 
                 source=request.POST.get('stripeToken')
                 )
             order.is_confirmed = True

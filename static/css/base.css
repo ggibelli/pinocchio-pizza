@@ -78,7 +78,7 @@ th, td {
   background: #f0ac4e6b;
 }
 
-#kind-list li:nth-of-type(1n+10) {
+#dish-list li:nth-of-type(1n+10) {
   display: none;
 }
 

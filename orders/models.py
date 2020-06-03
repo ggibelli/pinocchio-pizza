@@ -101,7 +101,7 @@ class Order(models.Model):
 
 class MenuInstance(models.Model):
     customer = models.ForeignKey(user, on_delete=models.CASCADE)
-    kind = models.ForeignKey(MenuItem, on_delete=models.CASCADE, verbose_name='dish')
+    dish = models.ForeignKey(MenuItem, on_delete=models.CASCADE, verbose_name='dish')
     toppings = models.ManyToManyField(Topping, blank=True)
     n_items = models.PositiveIntegerField(validators=[MinValueValidator(1)], default=1, verbose_name='n.')
     size = models.CharField(
@@ -117,17 +117,17 @@ class MenuInstance(models.Model):
 
     @property
     def category(self):
-        return self.kind.category.name
+        return self.dish.category.name
 
     # Calling this get price to update the order price, when subs I need to count the toppings, 
     # so I skip the counting when instance created and calculate on M2M changed in signal
     @property
     def price(self):
         if self.size == SM:
-            price = self.kind.price * self.n_items
+            price = self.dish.price * self.n_items
         elif self.size == LG:
-            price = self.kind.price_large * self.n_items
-        if self.kind.category.name == 'Subs':
+            price = self.dish.price_large * self.n_items
+        if self.dish.category.name == 'Subs':
             price = decimal.Decimal(price) + decimal.Decimal(self.toppings.all().count() * 0.50)
         return decimal.Decimal(price)
 
@@ -137,7 +137,7 @@ class MenuInstance(models.Model):
          
 
     def __str__(self):
-        return f'{self.kind}'
+        return f'{self.dish}'
 
 
 
